@@ -10,7 +10,7 @@ for Pe=100
 for beta=0.99
     tic
 XEndDistr=[];
-chi = 10 ; % chemotactic strength (dimensionless) 
+chi = 0 ; % chemotactic strength (dimensionless) 
 % (can alter this paramter)
 lambda_0 = 2; % tumble rate (s^-1)
 %Vs = 50*10^-6; % swimming speed (ms^-1)

@@ -36,8 +36,14 @@ t_count = 0; % counts time as the period passes
              % maybe could be useful for models 
              % without fixed sampling times
 
+% initialise hitting_times and orientation hit
+%upper_hit = [];
+%lower_hit = [];
+hit = [];
+initial_mat = zeros;
+
 %%y-loop
-for  y0=linspace(0,2,10*2)
+for  y0=linspace(0,2,100*2)
     %theta-loop
     for nTheta=1:nThetaTotal
     theta_0=2*pi*nTheta/nThetaTotal  ;  
@@ -64,11 +70,13 @@ for  y0=linspace(0,2,10*2)
                 XX=XX+dX; %update position and orientation
                 %%update XX for periodic top and bottom wall
                 if XX(1)>2
+                    hit(:,end) = [tStep,XX(2)];
                     XX(1)=4-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
                     XX(2)=theta_new;
                 elseif XX(1)<0
+                    hit(:,end) = [tStep,XX(2)];
                     XX(1)=-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;

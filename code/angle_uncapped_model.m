@@ -10,7 +10,7 @@ for Pe=100
 for beta=0.99
     tic
 XEndDistr=[];
-chi = 0.99; % chemotactic strength (dimensionless) 
+chi = 2; % chemotactic strength (dimensionless) 
 % (can alter this paramter)
 lambda_0 = 2; % tumble rate (s^-1)
 %Vs = 50*10^-6; % swimming speed (ms^-1)
@@ -21,12 +21,14 @@ T = W/(2*U); %dimensional constant (s)
 %time frames considered non dimensional
 %T1s = 1/T; % 1 non dimensional second
 
+
+
 %tumble rate used as parameter for exponential dist to sample tau's
 lambda = @(theta) (lambda_0-chi*sin(theta));
 
 
 nThetaTotal= 20; %10;%20;
-nPeriods = 2000; % # of simulated observations
+nPeriods = 6000; % # of simulated observations
 nSteps=20; % more smooth between t,tau;
 %repT=repmat(T,nPeriods,1);
 % TotalTime=nSteps*nPeriods*dt(1);
@@ -34,7 +36,12 @@ nSteps=20; % more smooth between t,tau;
 T0=0;
 sampleTimes=cumsum([T0;T(:)]);
 nTimes = nPeriods * nSteps;        % Total # of time steps simulated
-%%y-loop
+
+% the time steps used
+dt = 0.1/(T*nSteps);
+
+% counter variable for timestep delay of tumble
+delay_count = 0;
 
 %mini counter for self
 timer_count = 0;
@@ -43,10 +50,11 @@ timer_count = 0;
 trajectory = []; 
 which = 0; %which number swimmer counter
 
-for y0=linspace(0,2,400*2)
+%%y-loop
+for y0=linspace(0,2,200*2)
 
     timer_count = timer_count+1;
-    if timer_count == 50
+    if timer_count == 20
         disp(y0/2)
         timer_count = 0;
     end
@@ -68,23 +76,30 @@ for y0=linspace(0,2,400*2)
         XX2=X2;
         XX=[XX1; XX2]; %Initial position and orientations in time
 
+        tau = exprnd(1/(lambda(XX(2))*T));
+        delay = ceil(tau/dt);
+
         for iPeriod=1:nPeriods %loop periods
 
             %so pluck out a tj from the exponential distribution based
             %on some parameters then
-            tau = exprnd(1/(lambda(XX(2))*T));
             
             
-            jump = rand(1)*2*pi;
-            times_pre = linspace(0,tau,nSteps);
-            pre_dt = times_pre(2);
             %-------------------------------
-            
-            for t_sub = times_pre
+            for t_sub = nSteps
+                if delay_count == delay|delay_count == 200
+                    tau = exprnd(1/(lambda(XX(2))*T));
+                    delay = ceil(tau/dt);
+                    delay_count = 0;
+                    jump = rand(1)*2*pi;
+                    XX(2) = XX(2) + jump;
+                end
+                delay_count = delay_count + 1;
+                
                 z = randn(2,1);
                 drift=MU(1,XX); %calculate drift term
                 diffusion=DIFF(1,XX); %calculate diffusion term
-                dX = drift * pre_dt  +  diffusion * z * sqrt(pre_dt);            
+                dX = drift * dt  +  diffusion * z * sqrt(dt);            
                 XX=XX+dX; %update position and orientation
 
                 %%update XX for periodic top and bottom wall
@@ -101,7 +116,7 @@ for y0=linspace(0,2,400*2)
                 end
             end
 
-            %XX(2) = XX(2) + jump;
+            
             %------------------------------
          
             
@@ -111,7 +126,7 @@ for y0=linspace(0,2,400*2)
         end
 
     which = which + 1;
-    if which == 450
+    if which == 250
         trajectory = [X1;X2];
     end
     %%Positions and orientations of particles at the end of runtime        

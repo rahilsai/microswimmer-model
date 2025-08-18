@@ -10,7 +10,7 @@ for Pe=100
 for beta=0.99
     tic
 XEndDistr=[];
-chi = 0 ; % chemotactic strength (dimensionless) 
+chi = 5 ; % chemotactic strength (dimensionless) 
 % (can alter this paramter)
 lambda_0 = 2; % tumble rate (s^-1)
 %Vs = 50*10^-6; % swimming speed (ms^-1)
@@ -28,7 +28,7 @@ lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old));
 
 
 nThetaTotal= 20; %10;%20;
-nPeriods = 200; % # of simulated observations
+nPeriods = 2000; % # of simulated observations
 nSteps=5; % more smooth between t,tau,T;
 %repT=repmat(T,nPeriods,1);
 % TotalTime=nSteps*nPeriods*dt(1);
@@ -114,7 +114,7 @@ for  y0=linspace(0,2,1000*2)
                 end
             end
 
-            XX(2) = XX(2) + jump;
+            %XX(2) = XX(2) + jump;
 
             for t_sub = times_post
                 z = randn(2,1); 
