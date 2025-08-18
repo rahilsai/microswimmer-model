@@ -40,10 +40,20 @@ t_count = 0; % counts time as the period passes
 %upper_hit = [];
 %lower_hit = [];
 hit = [];
-initial_mat = zeros;
+initial_mat = [];
+
+%mini counter for self
+timer_count = 0;
 
 %%y-loop
 for  y0=linspace(0,2,100*2)
+
+    timer_count = timer_count+1;
+    if timer_count == 20
+        disp(y0/2)
+        timer_count = 0;
+    end
+
     %theta-loop
     for nTheta=1:nThetaTotal
     theta_0=2*pi*nTheta/nThetaTotal  ;  
@@ -70,13 +80,13 @@ for  y0=linspace(0,2,100*2)
                 XX=XX+dX; %update position and orientation
                 %%update XX for periodic top and bottom wall
                 if XX(1)>2
-                    hit(:,end) = [tStep,XX(2)];
+                    hit(:,end+1) = [XX(2);tStep];
                     XX(1)=4-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
                     XX(2)=theta_new;
                 elseif XX(1)<0
-                    hit(:,end) = [tStep,XX(2)];
+                    hit(:,end+1) = [XX(2);tStep];
                     XX(1)=-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
@@ -90,6 +100,9 @@ for  y0=linspace(0,2,100*2)
                 times(iPeriod+1) = (iPeriod+1)*0.1;
             end
         end
+   
+    initial_mat((round(y0*199))/2+1,nTheta) = hit(2,1);
+
     if which == whichone
         trajectory = [X1;X2];
     end
