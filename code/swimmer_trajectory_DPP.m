@@ -46,7 +46,9 @@ initial_mat = [];
 timer_count = 0;
 
 %%y-loop
-for  y0=linspace(0,2,100*2)
+for ny = 1:201
+    y0linspace = linspace(0,2,100*2);
+    y0 = y0linspace(ny);
 
     timer_count = timer_count+1;
     if timer_count == 20
@@ -101,7 +103,8 @@ for  y0=linspace(0,2,100*2)
             end
         end
    
-    initial_mat((round(y0*199))/2+1,nTheta) = hit(2,1);
+    %initial_mat((round(y0*199))/2+1,nTheta) = hit(2,1);
+    initial_mat(ny,nTheta) = hit(2,1);
 
     if which == whichone
         trajectory = [X1;X2];
