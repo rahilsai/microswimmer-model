@@ -17,6 +17,7 @@ dt       =  0.1;%sampling time
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
 dt=dt/nSteps;
+dt_0 = dt(1); % just for self use as single value
 % TotalTime=nSteps*nPeriods*dt(1);
 DT=repmat(dt,1,nSteps);
 T0=0;
@@ -41,14 +42,16 @@ t_count = 0; % counts time as the period passes
 %lower_hit = [];
 hit = [];
 initial_mat = [];
+y_index = 0;
 
 %mini counter for self
 timer_count = 0;
 
 %%y-loop
-for ny = 1:201
-    y0linspace = linspace(0,2,100*2);
-    y0 = y0linspace(ny);
+for y0 = linspace(0,2,200*2)
+    % keeps track of the number of y values
+    y_index = y_index + 1;
+    
 
     timer_count = timer_count+1;
     if timer_count == 20
@@ -58,6 +61,9 @@ for ny = 1:201
 
     %theta-loop
     for nTheta=1:nThetaTotal
+    % re initialise hitting matrix
+    hit = [];    
+
     theta_0=2*pi*nTheta/nThetaTotal  ;  
     %%Initialise SDE
     X0=[y0;theta_0];
@@ -104,7 +110,11 @@ for ny = 1:201
         end
    
     %initial_mat((round(y0*199))/2+1,nTheta) = hit(2,1);
-    initial_mat(ny,nTheta) = hit(2,1);
+    if hit
+        initial_mat(y_index,nTheta) = hit(2,1);
+    else
+        initial_mat(y_index,nTheta) = NaN;
+    end
 
     if which == whichone
         trajectory = [X1;X2];
@@ -158,6 +168,27 @@ figure()
 scatter(times,mod(trajectory(2,:)/pi+0.5,1))
 xlabel({'t'})
 ylabel({'\theta','[\pi rad]'})
+
+
+%-------------GPT-----------------------
+figure();
+theta_vals = linspace(0, 2*pi, 20);   % 20 orientation values
+y_vals = linspace(0, 2, 200);        % 200 y positions
+
+imagesc(theta_vals, y_vals, flip(initial_mat*dt_0));
+set(gca,'YDir','normal');            % y goes upward
+axis square;
+xlabel('\theta_0'); ylabel('y_0');
+title('Hitting times (steps)');
+colorbar;
+
+
+% Set nicer axis ticks
+xticks(0:pi/2:2*pi);                 % ticks every 90 degrees
+xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
+yticks(0:0.5:2);                     % ticks at 0, 0.5, 1.0, 1.5, 2.0
+
+%-------------------------------------
 
 end
 toc
