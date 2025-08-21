@@ -53,7 +53,7 @@ sum_mat_c = zeros(200,20);
 crossed = [];
 
 % total number of simulations for each given point
-sim_num = 1;
+sim_num = 5;
 
 %mini counter for self
 timer_count = 0;
@@ -146,7 +146,7 @@ for y0 = linspace(0,2,100*2)
         initial_mat_t(y_index,nTheta) = hit(2,1);
         initial_mat_o(y_index,nTheta) = hit(1,1);
     else
-        initial_mat_t(y_index,nTheta) = 10000;
+        initial_mat_t(y_index,nTheta) = nTimes;
         initial_mat_o(y_index,nTheta) = 0; % this could be an issue as it
                                            % makes one direction favoured
     end
@@ -154,7 +154,7 @@ for y0 = linspace(0,2,100*2)
     if crossed
         initial_mat_c(y_index,nTheta) = crossed(2,1);
     else 
-        initial_mat_c(y_index,nTheta) = 10000;
+        initial_mat_c(y_index,nTheta) = nTimes;
     end
 
 
