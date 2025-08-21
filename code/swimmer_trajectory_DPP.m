@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 2000; % # of simulated observations
+nPeriods = 4000; % # of simulated observations
 dt       =  0.1;%sampling time
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
@@ -40,24 +40,37 @@ t_count = 0; % counts time as the period passes
 % initialise hitting_times and orientation hit
 %upper_hit = [];
 %lower_hit = [];
-hit = [];
-initial_mat = [];
+
+initial_mat_t = [];
+initial_mat_o = [];
+sum_mat_t = zeros(200,20);
+sum_mat_o = zeros(200,20);
 y_index = 0;
+simulation_count = 0;
 
 %mini counter for self
 timer_count = 0;
 
+
+for iter = 1:20
+simulation_count = simulation_count + 1;
+disp(simulation_count)
+hit = [];
+initial_mat_t = [];
+initial_mat_o = [];
+y_index = 0;
+
 %%y-loop
-for y0 = linspace(0,2,200*2)
+for y0 = linspace(0,2,100*2)
     % keeps track of the number of y values
     y_index = y_index + 1;
     
 
-    timer_count = timer_count+1;
-    if timer_count == 20
-        disp(y0/2)
-        timer_count = 0;
-    end
+    %timer_count = timer_count+1;
+    %if timer_count == 20
+    %    disp(y0/2)
+    %    timer_count = 0;
+    %end
 
     %theta-loop
     for nTheta=1:nThetaTotal
@@ -111,10 +124,14 @@ for y0 = linspace(0,2,200*2)
    
     %initial_mat((round(y0*199))/2+1,nTheta) = hit(2,1);
     if hit
-        initial_mat(y_index,nTheta) = hit(2,1);
+        initial_mat_t(y_index,nTheta) = hit(2,1);
+        initial_mat_o(y_index,nTheta) = hit(1,1);
     else
-        initial_mat(y_index,nTheta) = NaN;
+        initial_mat_t(y_index,nTheta) = 10000;
+        initial_mat_o(y_index,nTheta) = 0; % this could be an issue as it
+                                           % makes one direction favoured
     end
+
 
     if which == whichone
         trajectory = [X1;X2];
@@ -125,6 +142,9 @@ for y0 = linspace(0,2,200*2)
     XEndDistr=[XEndDistr [ X1(end); X2(end)]];
 
     end
+end
+sum_mat_t = sum_mat_t + initial_mat_t;
+sum_mat_o = sum_mat_o + initial_mat_o;
 end
 
 MatName=sprintf('DP_Pe%iPe_T%ibeta%inu%i.mat',Pe,Pe_T,beta,nu);
@@ -171,11 +191,14 @@ ylabel({'\theta','[\pi rad]'})
 
 
 %-------------GPT-----------------------
+
+% this plots the average first hit times for all the initial
+% position/orientations
 figure();
 theta_vals = linspace(0, 2*pi, 20);   % 20 orientation values
 y_vals = linspace(0, 2, 200);        % 200 y positions
 
-imagesc(theta_vals, y_vals, flip(initial_mat*dt_0));
+imagesc(theta_vals, y_vals, flip((sum_mat_t/20)*dt_0));
 set(gca,'YDir','normal');            % y goes upward
 axis square;
 xlabel('\theta_0'); ylabel('y_0');
@@ -188,6 +211,25 @@ xticks(0:pi/2:2*pi);                 % ticks every 90 degrees
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 yticks(0:0.5:2);                     % ticks at 0, 0.5, 1.0, 1.5, 2.0
 
+
+% this plots the average first hit orientation for all the initial
+% position/orientations
+figure();
+theta_vals = linspace(0, 2*pi, 20);   % 20 orientation values
+y_vals = linspace(0, 2, 200);        % 200 y positions
+
+imagesc(theta_vals, y_vals, flip(sum_mat_o/(20*2*pi)));
+set(gca,'YDir','normal');            % y goes upward
+axis square;
+xlabel('\theta_0'); ylabel('y_0');
+title('Hitting times (steps)');
+colorbar;
+
+
+% Set nicer axis ticks
+xticks(0:pi/2:2*pi);                 % ticks every 90 degrees
+xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
+yticks(0:0.5:2);                     % ticks at 0, 0.5, 1.0, 1.5, 2.0
 %-------------------------------------
 
 end
