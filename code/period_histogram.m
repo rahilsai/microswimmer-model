@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 10000; % # of simulated observations
+nPeriods = 1000; % # of simulated observations
 dt       =  0.1;%sampling time
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
@@ -185,7 +185,7 @@ ylabel({'\theta','[\pi rad]'})
 
 %attempt at making something to find priod lengths
 figure()
-scatter(times,mod(trajectory(2,:)/pi+0.5,1))
+scatter(times,mod(trajectory(2,:)+0.5/pi,1))
 xlabel({'t'})
 ylabel({'\theta','[\pi rad]'})
 
@@ -235,7 +235,7 @@ yticks(0:0.5:2);                     % ticks at 0, 0.5, 1.0, 1.5, 2.0
 
 % histogram thingy
 figure()
-histogram(mod(trajectory(2,:)/pi+0.5,2),BinWidth=0.05)
+histogram(mod(trajectory(2,:)/pi,2),BinWidth=0.05)
 xlabel({'\theta','[\pi rad]'})
 
 

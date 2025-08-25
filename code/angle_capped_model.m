@@ -6,7 +6,7 @@ rng(seed);
 %initialise parameters
 nu=0.04;
 Pe_T=1e6;
-for Pe=100
+for Pe=20
 for beta=0.99
     tic
 XEndDistr=[];
@@ -23,7 +23,8 @@ T = W/(2*U); %dimensional constant (s)
 %T1s = 1/T; % 1 non dimensional second
 
 %tumble rate used as parameter for exponential dist to sample tau's
-lambda = @(theta) (lambda_0-chi*sin(theta));
+%lambda = @(theta) (lambda_0-chi*sin(theta));
+lambda = @(theta) lambda_0;
 
 nThetaTotal= 20; %10;%20;
 nPeriods = 2000; % # of simulated observations
@@ -43,7 +44,7 @@ timer_count = 0;
 trajectory = []; 
 which = 0; %which number swimmer counter
 
-for  y0=linspace(0,2,10*2)
+for  y0=linspace(0,2,300*2)
 
     timer_count = timer_count+1;
     if timer_count == 2

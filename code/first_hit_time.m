@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 3000; % # of simulated observations
+nPeriods = 2000; % # of simulated observations
 dt       =  0.1;%sampling time
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
@@ -52,7 +52,7 @@ simulation_count = 0;
 timer_count = 0;
 
 
-for iter = 1:10
+for iter = 1:1
 simulation_count = simulation_count + 1;
 disp(simulation_count)
 hit = [];
@@ -187,14 +187,14 @@ scatter(times,trajectory(2,:)/pi)
 xlabel({'t'})
 ylabel({'\theta','[\pi rad]'})
 
-%attempt at making something to find priod lengths
+%attempt at making something to find period lengths
 figure()
 scatter(times,mod(trajectory(2,:)/pi+0.5,1))
 xlabel({'t'})
 ylabel({'\theta','[\pi rad]'})
 
 
-%-------------GPT-----------------------
+%------------------------------------
 
 % this plots the average first hit times for all the initial
 % position/orientations

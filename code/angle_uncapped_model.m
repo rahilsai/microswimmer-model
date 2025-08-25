@@ -10,9 +10,9 @@ for Pe=100
 for beta=0.99
     tic
 XEndDistr=[];
-chi = 2; % chemotactic strength (dimensionless) 
+chi = 0.99; % chemotactic strength (dimensionless) 
 % (can alter this paramter)
-lambda_0 = 2; % tumble rate (s^-1)
+lambda_0 = 0.99; % tumble rate (s^-1)
 %Vs = 50*10^-6; % swimming speed (ms^-1)
 
 W = 425*10^-6; % channel width (m)
@@ -26,9 +26,8 @@ T = W/(2*U); %dimensional constant (s)
 %tumble rate used as parameter for exponential dist to sample tau's
 lambda = @(theta) (lambda_0-chi*sin(theta));
 
-
 nThetaTotal= 20; %10;%20;
-nPeriods = 6000; % # of simulated observations
+nPeriods = 1000; % # of simulated observations
 nSteps=20; % more smooth between t,tau;
 %repT=repmat(T,nPeriods,1);
 % TotalTime=nSteps*nPeriods*dt(1);
@@ -87,7 +86,7 @@ for y0=linspace(0,2,200*2)
             
             %-------------------------------
             for t_sub = nSteps
-                if delay_count == delay|delay_count == 200
+                if delay_count == delay|delay_count == 100
                     tau = exprnd(1/(lambda(XX(2))*T));
                     delay = ceil(tau/dt);
                     delay_count = 0;

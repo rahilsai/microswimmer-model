@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 5000; % # of simulated observations
+nPeriods = 1500; % # of simulated observations
 dt       =  0.1;%sampling time
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
@@ -53,7 +53,7 @@ sum_mat_c = zeros(200,20);
 crossed = [];
 
 % total number of simulations for each given point
-sim_num = 5;
+sim_num = 40;
 
 %mini counter for self
 timer_count = 0;
@@ -216,7 +216,7 @@ xticks(0:pi/2:2*pi);                 % ticks every 90 degrees
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 yticks(0:0.5:2);                     % ticks at 0, 0.5, 1.0, 1.5, 2.0
 
-%-------------GPT-----------------------
+%------------------
 
 % this plots the average first hit times for all the initial
 % position/orientations
