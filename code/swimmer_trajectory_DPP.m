@@ -14,6 +14,7 @@ XEndDistr=[];
 nThetaTotal=20;%10;%20;
 nPeriods = 1000; % # of simulated observations
 dt       =  0.1;%sampling time
+times = dt;
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
 dt=dt/nSteps;
@@ -26,17 +27,19 @@ nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 
 
 % initialise variable storing the trajectory of a swimmer
-trajectory = []; 
-which = 3; %which number swimmer counter
-whichone = 77;
+trajectory = zeros(2,nPeriods+1);
+traj_store = trajectory;
 
 % initialise store for all the time points 
 % measuring the theta/y (end of periods)
-times = [];
+times = repmat(times,1,nPeriods+1);
+times(1) = 0;
+times = cumsum(times);
+
+
 t_count = 0; % counts time as the period passes 
              % maybe could be useful for models 
              % without fixed sampling times
-
 y_index = 0;
 
 % total number of simulations for each given point
@@ -63,9 +66,7 @@ for y0 = linspace(0,2,100*2)
     end
 
     %theta-loop
-    for nTheta=1:nThetaTotal
-    % re initialise hitting matrix
-    hit = [];    
+    for nTheta=1:nThetaTotal   
 
     theta_0=2*pi*nTheta/nThetaTotal  ;  
     %%Initialise SDE
@@ -80,6 +81,8 @@ for y0 = linspace(0,2,100*2)
     XX1=X1;
     XX2=X2;
     XX=[XX1; XX2]; %Initial position and orientations in time
+    
+    
         for iPeriod=1:nPeriods %loop periods
             for iStep=1:nSteps %loop steps per period
                 tStep = nSteps * (iPeriod - 1) + iStep;
@@ -105,15 +108,12 @@ for y0 = linspace(0,2,100*2)
             %%Final position and orientation at end of iperiod
             X1(iPeriod+1)=XX(1);
             X2(iPeriod+1)=XX(2);
-            if which == whichone
-                times(iPeriod+1) = (iPeriod+1)*0.1;
-            end
         end
 
-    if which == whichone
-        trajectory = [X1;X2];
+    %stores the rest of the trajectory from
+    if ismember(y_index,10) && ismember(nTheta,10)
+        trajectory(:,:) = [X1;X2];
     end
-    which = which + 1;
 
     %%Positions and orientations of particles at the end of runtime        
     XEndDistr=[XEndDistr [ X1(end); X2(end)]];
