@@ -48,13 +48,16 @@ sum_mat_o = zeros(200,20);
 y_index = 0;
 simulation_count = 0;
 
+% total number of simulations for each given point
+sim_num = 40;
+
+
 %mini counter for self
 timer_count = 0;
 
 
 for iter = 1:20
-simulation_count = simulation_count + 1;
-disp(simulation_count)
+disp(iter)
 hit = [];
 initial_mat_t = [];
 initial_mat_o = [];

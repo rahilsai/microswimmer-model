@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 chi = 0.99; % chemotactic strength (dimensionless) 
 % (can alter this paramter)
-lambda_0 = 0.99; % tumble rate (s^-1)
+lambda_0 = 2; % tumble rate (s^-1)
 %Vs = 50*10^-6; % swimming speed (ms^-1)
 
 W = 425*10^-6; % channel width (m)
@@ -24,10 +24,10 @@ T = W/(2*U); %dimensional constant (s)
 
 
 %tumble rate used as parameter for exponential dist to sample tau's
-lambda = @(theta) (lambda_0-chi*sin(theta));
+lambda = @(theta) 90*(lambda_0-chi*sin(theta));
 
 nThetaTotal= 20; %10;%20;
-nPeriods = 1000; % # of simulated observations
+nPeriods = 3000; % # of simulated observations
 nSteps=20; % more smooth between t,tau;
 %repT=repmat(T,nPeriods,1);
 % TotalTime=nSteps*nPeriods*dt(1);
@@ -37,7 +37,7 @@ sampleTimes=cumsum([T0;T(:)]);
 nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 
 % the time steps used
-dt = 0.1/(T*nSteps);
+dt = 0.1/(nSteps);
 
 % counter variable for timestep delay of tumble
 delay_count = 0;
@@ -77,6 +77,7 @@ for y0=linspace(0,2,200*2)
 
         tau = exprnd(1/(lambda(XX(2))*T));
         delay = ceil(tau/dt);
+        delay_count = 0;
 
         for iPeriod=1:nPeriods %loop periods
 
@@ -96,8 +97,8 @@ for y0=linspace(0,2,200*2)
                 delay_count = delay_count + 1;
                 
                 z = randn(2,1);
-                drift=MU(1,XX); %calculate drift term
-                diffusion=DIFF(1,XX); %calculate diffusion term
+                drift=MU(0.1,XX); %calculate drift term
+                diffusion=DIFF(0.1,XX); %calculate diffusion term
                 dX = drift * dt  +  diffusion * z * sqrt(dt);            
                 XX=XX+dX; %update position and orientation
 

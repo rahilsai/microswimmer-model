@@ -60,8 +60,7 @@ timer_count = 0;
 
 
 for iter = 1:sim_num
-simulation_count = simulation_count + 1;
-disp(simulation_count)
+disp(iter)
 hit = [];
 crossed = [];
 initial_mat_t = [];
