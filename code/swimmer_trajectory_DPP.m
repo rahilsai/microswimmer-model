@@ -29,8 +29,8 @@ nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 % initialise variable storing the trajectory of a swimmer
 trajectory = zeros(2,nPeriods+1);
 traj_store = trajectory;
-y_samples = 99:110;
-theta_samples = 9:11;
+y_samples = 40:42;
+theta_samples = 11:20;
 traj_count = 0;
 
 % initialise store for all the time points 
@@ -169,13 +169,24 @@ scatter(times,mod(trajectory(2,:)/pi+0.5,1))
 xlabel({'t'})
 ylabel({'\theta','[\pi rad]'})
 
+% plots trajectory of many swimmers
+%for traj=1:length(traj_store(1,1,:))
+%    figure()
+%    scatter(traj_store(2,:,traj)/pi,traj_store(1,:,traj))
+%    xlabel({'\theta','[\pi rad]'})
+%    ylabel({'y'})
+%    ylim([0 2])
+%end
+
+all_theta = [];
 for traj=1:length(traj_store(1,1,:))
-    figure()
-    scatter(traj_store(2,:,traj)/pi,traj_store(1,:,traj))
-    xlabel({'\theta','[\pi rad]'})
-    ylabel({'y'})
-    ylim([0 2])
+    all_theta = [all_theta,traj_store(2,:,traj)];
 end
+
+% histogram thingy
+figure()
+histogram(mod(all_theta/pi,2),BinWidth=0.05)
+xlabel({'\theta','[\pi rad]'})
 
 end
 toc

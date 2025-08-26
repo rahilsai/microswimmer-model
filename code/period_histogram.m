@@ -233,7 +233,7 @@ yticks(0:0.5:2);                     % ticks at 0, 0.5, 1.0, 1.5, 2.0
 %-------------------------------------
 
 
-% histogram thingy
+% histogram thingy (now implemented into simmer_trajectory as well)
 figure()
 histogram(mod(trajectory(2,:)/pi,2),BinWidth=0.05)
 xlabel({'\theta','[\pi rad]'})
