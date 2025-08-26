@@ -29,6 +29,9 @@ nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 % initialise variable storing the trajectory of a swimmer
 trajectory = zeros(2,nPeriods+1);
 traj_store = trajectory;
+y_samples = 99:110;
+theta_samples = 9:11;
+traj_count = 0;
 
 % initialise store for all the time points 
 % measuring the theta/y (end of periods)
@@ -111,8 +114,10 @@ for y0 = linspace(0,2,100*2)
         end
 
     %stores the rest of the trajectory from
-    if ismember(y_index,10) && ismember(nTheta,10)
+    if ismember(y_index,y_samples) && ismember(nTheta,theta_samples)
+        traj_count = traj_count + 1;
         trajectory(:,:) = [X1;X2];
+        traj_store(:,:,traj_count) = trajectory;
     end
 
     %%Positions and orientations of particles at the end of runtime        
@@ -163,6 +168,14 @@ figure()
 scatter(times,mod(trajectory(2,:)/pi+0.5,1))
 xlabel({'t'})
 ylabel({'\theta','[\pi rad]'})
+
+for traj=1:length(traj_store(1,1,:))
+    figure()
+    scatter(traj_store(2,:,traj)/pi,traj_store(1,:,traj))
+    xlabel({'\theta','[\pi rad]'})
+    ylabel({'y'})
+    ylim([0 2])
+end
 
 end
 toc
