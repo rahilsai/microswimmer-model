@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 3000; % # of simulated observations
+nPeriods = 1000; % # of simulated observations
 dt       =  0.1;%sampling time
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
@@ -25,11 +25,6 @@ sampleTimes=cumsum([T0;DT(:)]);
 nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 
 
-% initialise variable storing the trajectory of a swimmer
-trajectory = []; 
-which = 3; %which number swimmer counter
-whichone = 77;
-
 % initialise store for all the time points 
 % measuring the theta/y (end of periods)
 times = [];
@@ -40,24 +35,25 @@ t_count = 0; % counts time as the period passes
 % initialise hitting_times and orientation hit
 %upper_hit = [];
 %lower_hit = [];
-initial_mat_t = [];
-initial_mat_o = [];
-sum_mat_t = zeros(200,20);
-sum_mat_o = zeros(200,20);
+current_mat_t_u = [];
+current_mat_t_l = [];
+current_mat_o = [];
 y_index = 0;
 simulation_count = 0;
 
 % initialise channel crossing variables
-initial_mat_c = [];
-sum_mat_c = zeros(200,20);
+current_mat_c = [];
 crossed = [];
 
 
 % total number of simulations for each given point
-sim_num = 6;
+sim_num = 2;
 
 % initialise matrix to store every single simulation/run
-large_mat = zeros(200,20,sim_num);
+large_mat_t_u = zeros(200,20,sim_num);
+large_mat_t_l = zeros(200,20,sim_num);
+large_mat_o = zeros(200,20,sim_num);
+large_mat_c = zeros(200,20,sim_num);
 
 %mini counter for self
 timer_count = 0;
@@ -65,11 +61,13 @@ timer_count = 0;
 
 for iter = 1:sim_num
 disp(iter)
-hit = [];
+hit_u = [];
+hit_l = [];
 crossed = [];
-initial_mat_t = [];
-initial_mat_o = [];
-initial_mat_c = [];
+current_mat_t_u = [];
+current_mat_t_l = [];
+current_mat_o = [];
+current_mat_c = [];
 y_index = 0;
 
 %%y-loop
@@ -87,7 +85,8 @@ for y0 = linspace(0,2,100*2)
     %theta-loop
     for nTheta=1:nThetaTotal
     % re initialise hitting matrix
-    hit = [];
+    hit_u = [];
+    hit_l = [];
     crossed = [];
 
     theta_0=2*pi*nTheta/nThetaTotal  ;  
@@ -115,13 +114,13 @@ for y0 = linspace(0,2,100*2)
                 XX(2) = mod(XX(2), 2*pi);
                 %%update XX for periodic top and bottom wall
                 if XX(1)>2
-                    hit(:,end+1) = [XX(2);tStep];
+                    hit_u(:,end+1) = [XX(2);tStep];
                     XX(1)=4-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
                     XX(2)=theta_new;
                 elseif XX(1)<0
-                    hit(:,end+1) = [XX(2);tStep];
+                    hit_l(:,end+1) = [XX(2);tStep];
                     XX(1)=-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
@@ -129,7 +128,7 @@ for y0 = linspace(0,2,100*2)
                 end
 
                 % checks if channel crossing condition has been achieved
-                if XX(1)>1.5
+                if XX(1)>1
                     crossed(:,end+1) = [XX(2);tStep];
                 end
             end
@@ -140,32 +139,33 @@ for y0 = linspace(0,2,100*2)
             %%Final position and orientation at end of iperiod
             X1(iPeriod+1)=XX(1);
             X2(iPeriod+1)=XX(2);
-            if which == whichone
-                times(iPeriod+1) = (iPeriod+1)*0.1;
-            end
         end
-   
-    %initial_mat((round(y0*199))/2+1,nTheta) = hit(2,1);
-    if hit
-        initial_mat_t(y_index,nTheta) = hit(2,1);
-        initial_mat_o(y_index,nTheta) = hit(1,1);
+
+    % if upper wall hit, stores values of first hit 
+    if hit_u
+        current_mat_t_u(y_index,nTheta) = hit_u(2,1);
+        current_mat_o(y_index,nTheta) = hit_u(1,1);
     else
-        initial_mat_t(y_index,nTheta) = NaN;
-        initial_mat_o(y_index,nTheta) = NaN; % this could be an issue as it
+        current_mat_t_u(y_index,nTheta) = NaN;
+        current_mat_o(y_index,nTheta) = NaN; % this could be an issue as it
+                                           % makes one direction favoured
+    end
+
+    % if lower wall hit, stores values of first hit 
+    if hit_l
+        current_mat_t_l(y_index,nTheta) = hit_l(2,1);
+        %current_mat_o(y_index,nTheta) = hit_l(1,1);
+    else
+        current_mat_t_l(y_index,nTheta) = NaN;
+        %current_mat_o(y_index,nTheta) = NaN; % this could be an issue as it
                                            % makes one direction favoured
     end
 
     if crossed
-        initial_mat_c(y_index,nTheta) = crossed(2,1);
+        current_mat_c(y_index,nTheta) = crossed(2,1);
     else 
-        initial_mat_c(y_index,nTheta) = NaN;
+        current_mat_c(y_index,nTheta) = NaN;
     end
-
-
-    if which == whichone
-        trajectory = [X1;X2];
-    end
-    which = which + 1;
 
     %%Positions and orientations of particles at the end of runtime        
     XEndDistr=[XEndDistr [ X1(end); X2(end)]];
@@ -178,12 +178,18 @@ for y0 = linspace(0,2,100*2)
 
     end
 end
-large_mat(:,:,iter) = initial_mat_t;
-sum_mat_t = sum_mat_t + initial_mat_t;
-sum_mat_o = sum_mat_o + initial_mat_o;
-sum_mat_c = sum_mat_c + initial_mat_c;
+large_mat_t_u(:,:,iter) = current_mat_t_u;
+large_mat_t_l(:,:,iter) = current_mat_t_l;
+large_mat_o(:,:,iter) = current_mat_o;
+large_mat_c(:,:,iter) = current_mat_c;
 
 end
+% taks average of all non NaN values
+averaged_mat_t_u = mean(large_mat_t_u,3,"omitnan");
+averaged_mat_t_l = mean(large_mat_t_l,3,"omitnan");
+averaged_mat_o = mean(large_mat_o,3,"omitnan");
+averaged_mat_c = mean(large_mat_c,3,"omitnan");
+
 
 MatName=sprintf('DP_Pe%iPe_T%ibeta%inu%i.mat',Pe,Pe_T,beta,nu);
 save(MatName,'XEndDistr','Pe', 'beta','nu','Pe_T');
@@ -214,7 +220,7 @@ figure();
 theta_vals = linspace(0, 2*pi, 20);   % 20 orientation values
 y_vals = linspace(0, 2, 200);        % 200 y positions
 
-data_c = (sum_mat_c/sim_num)*dt_0;
+data_c = (averaged_mat_c)*dt_0;
 
 h_c = imagesc(theta_vals, y_vals, data_c);
 set(gca,'YDir','normal');            % y goes upward
@@ -231,15 +237,16 @@ xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 yticks(0:0.5:2);                     % ticks multiples of 0.5
 
-%---------------------------------------
-% plot average first hit times
+
+%-----------------------------------
+% upper wall plot average first hit times
 figure();
 theta_vals = linspace(0, 2*pi, 20);   % 20 orientation values
 y_vals = linspace(0, 2, 200);        % 200 y positions
 
-data_t = (sum_mat_t/sim_num)*dt_0;
+data_t_u = (averaged_mat_t_u)*dt_0;
 
-h_t = imagesc(theta_vals, y_vals, data_t);
+h_t_u = imagesc(theta_vals, y_vals, data_t_u);
 set(gca,'YDir','normal');            % y goes upward
 axis square;
 xlabel('\theta_0'); ylabel('y_0');
@@ -247,7 +254,7 @@ title('Hitting times (steps)');
 colorbar;
 
 % make NaN transparent (white)
-set(h_t, 'AlphaData', ~isnan(data_t));   
+set(h_t_u, 'AlphaData', ~isnan(data_t_u));   
 set(gca, 'Color', 'w');              % background is white
 
 xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
@@ -260,8 +267,7 @@ figure();
 theta_vals = linspace(0, 2*pi, 20);   % 20 orientation values
 y_vals = linspace(0, 2, 200);        % 200 y positions
 
-%data_o = sum_mat_o/(sim_num*2*pi);
-data_o = sum_mat_o/(sim_num);
+data_o = (averaged_mat_o);
 
 h_o = imagesc(theta_vals, y_vals, data_o);
 set(gca,'YDir','normal');            % y goes upward
@@ -277,20 +283,15 @@ set(gca, 'Color', 'w');              % background is white
 xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 yticks(0:0.5:2);                     % ticks multiples of 0.5
-%-------------------------------------
-
-%----------------------------------------TESTING TESTING
-
-averaged_mat = mean(large_mat,3,"omitnan");
-
-% plot average first hit times
+%-----------------------------------------
+% lower wall plot average first hit times
 figure();
 theta_vals = linspace(0, 2*pi, 20);   % 20 orientation values
 y_vals = linspace(0, 2, 200);        % 200 y positions
 
-data_h = (averaged_mat)*dt_0;
+data_t_l = (averaged_mat_t_l)*dt_0;
 
-h_h = imagesc(theta_vals, y_vals, data_h);
+h_t_l = imagesc(theta_vals, y_vals, data_t_l);
 set(gca,'YDir','normal');            % y goes upward
 axis square;
 xlabel('\theta_0'); ylabel('y_0');
@@ -298,14 +299,14 @@ title('Hitting times (steps)');
 colorbar;
 
 % make NaN transparent (white)
-set(h_h, 'AlphaData', ~isnan(data_h));   
+set(h_t_l, 'AlphaData', ~isnan(data_t_l));   
 set(gca, 'Color', 'w');              % background is white
 
 xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 yticks(0:0.5:2);                     % ticks multiples of 0.5
 
-%----------------------------------------
+%-----------------------------------------
 end
 toc
 end
