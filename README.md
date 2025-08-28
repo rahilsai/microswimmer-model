@@ -10,6 +10,7 @@ also produces the period histogram which
 may make the period_histogram obsolete
 
 - Channel_crossing
+uses NaN, or averages from values that are not NaN
 finds first hit time/angle of each wall
 finds crossing channel time
 

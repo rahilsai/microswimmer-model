@@ -52,8 +52,12 @@ initial_mat_c = [];
 sum_mat_c = zeros(200,20);
 crossed = [];
 
+
 % total number of simulations for each given point
-sim_num = 1;
+sim_num = 6;
+
+% initialise matrix to store every single simulation/run
+large_mat = zeros(200,20,sim_num);
 
 %mini counter for self
 timer_count = 0;
@@ -174,9 +178,11 @@ for y0 = linspace(0,2,100*2)
 
     end
 end
+large_mat(:,:,iter) = initial_mat_t;
 sum_mat_t = sum_mat_t + initial_mat_t;
 sum_mat_o = sum_mat_o + initial_mat_o;
 sum_mat_c = sum_mat_c + initial_mat_c;
+
 end
 
 MatName=sprintf('DP_Pe%iPe_T%ibeta%inu%i.mat',Pe,Pe_T,beta,nu);
@@ -273,6 +279,33 @@ xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 yticks(0:0.5:2);                     % ticks multiples of 0.5
 %-------------------------------------
 
+%----------------------------------------TESTING TESTING
+
+averaged_mat = mean(large_mat,3,"omitnan");
+
+% plot average first hit times
+figure();
+theta_vals = linspace(0, 2*pi, 20);   % 20 orientation values
+y_vals = linspace(0, 2, 200);        % 200 y positions
+
+data_h = (averaged_mat)*dt_0;
+
+h_h = imagesc(theta_vals, y_vals, data_h);
+set(gca,'YDir','normal');            % y goes upward
+axis square;
+xlabel('\theta_0'); ylabel('y_0');
+title('Hitting times (steps)');
+colorbar;
+
+% make NaN transparent (white)
+set(h_h, 'AlphaData', ~isnan(data_h));   
+set(gca, 'Color', 'w');              % background is white
+
+xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
+xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
+yticks(0:0.5:2);                     % ticks multiples of 0.5
+
+%----------------------------------------
 end
 toc
 end
