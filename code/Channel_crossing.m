@@ -185,13 +185,16 @@ large_mat_o_l(:,:,iter) = current_mat_o_l;
 large_mat_c(:,:,iter) = current_mat_c;
 
 end
-% taks average of all non NaN values
+% takes average of all non NaN values
 averaged_mat_t_u = mean(large_mat_t_u,3,"omitnan");
 averaged_mat_t_l = mean(large_mat_t_l,3,"omitnan");
 averaged_mat_o_u = mean(large_mat_o_u,3,"omitnan");
 averaged_mat_o_l = mean(large_mat_o_l,3,"omitnan");
 averaged_mat_c = mean(large_mat_c,3,"omitnan");
 
+% create 1D array of all theta values hitting each wall
+theta_u = rmmissing(large_mat_o_u(:)');
+theta_l = rmmissing(large_mat_o_l(:)');
 
 MatName=sprintf('DP_Pe%iPe_T%ibeta%inu%i.mat',Pe,Pe_T,beta,nu);
 save(MatName,'XEndDistr','Pe', 'beta','nu','Pe_T');
@@ -215,6 +218,29 @@ view([90 -90])
 figure(Name="y_dist");histogram(XEndDistr(1,:))
 xlabel({'y'})
 ylabel({'n(y)'})
+
+%--------------------------------
+% wall hitting angle distributions upper wall
+figure()
+histogram(theta_u,BinWidth=0.05)
+xlabel({'\theta','[\pi rad]'})
+title('upper wall hitting angle');
+
+figure()
+polarhistogram(theta_u,BinWidth=0.05)
+xlabel({'\theta','[\pi rad]'})
+title('upper wall hitting angle');
+
+% wall hitting angle distribution upper wall
+figure()
+histogram(theta_l)
+xlabel({'\theta','[\pi rad]'})
+title('lower wall hitting angle');
+
+figure()
+polarhistogram(theta_u)
+xlabel({'\theta','[\pi rad]'})
+title('lower wall hitting angle');
 
 %----------------------------------------MAIN PLOTS FOR THIS CODE
 % plot average crossing times
