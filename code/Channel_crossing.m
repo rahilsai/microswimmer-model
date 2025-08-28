@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 1500; % # of simulated observations
+nPeriods = 3000; % # of simulated observations
 dt       =  0.1;%sampling time
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
@@ -53,7 +53,7 @@ sum_mat_c = zeros(200,20);
 crossed = [];
 
 % total number of simulations for each given point
-sim_num = 40;
+sim_num = 1;
 
 %mini counter for self
 timer_count = 0;
@@ -74,11 +74,11 @@ for y0 = linspace(0,2,100*2)
     y_index = y_index + 1;
     
 
-    %timer_count = timer_count+1;
-    %if timer_count == 20
-    %    disp(y0/2)
-    %    timer_count = 0;
-    %end
+    timer_count = timer_count+1;
+    if timer_count == 20
+        disp(y0/2)
+        timer_count = 0;
+    end
 
     %theta-loop
     for nTheta=1:nThetaTotal
@@ -108,6 +108,7 @@ for y0 = linspace(0,2,100*2)
                 diffusion=DIFF(t,XX); %calculate diffusion term
                 dX = drift * dt(iPeriod)  +  diffusion * z * sqrtDT(iPeriod);            
                 XX=XX+dX; %update position and orientation
+                XX(2) = mod(XX(2), 2*pi);
                 %%update XX for periodic top and bottom wall
                 if XX(1)>2
                     hit(:,end+1) = [XX(2);tStep];
@@ -129,9 +130,9 @@ for y0 = linspace(0,2,100*2)
                 end
             end
             %if channel "crossed" break period loop
-            if crossed
-                break
-            end
+            %if crossed
+            %    break
+            %end
             %%Final position and orientation at end of iperiod
             X1(iPeriod+1)=XX(1);
             X2(iPeriod+1)=XX(2);
@@ -145,15 +146,15 @@ for y0 = linspace(0,2,100*2)
         initial_mat_t(y_index,nTheta) = hit(2,1);
         initial_mat_o(y_index,nTheta) = hit(1,1);
     else
-        initial_mat_t(y_index,nTheta) = nTimes;
-        initial_mat_o(y_index,nTheta) = 0; % this could be an issue as it
+        initial_mat_t(y_index,nTheta) = NaN;
+        initial_mat_o(y_index,nTheta) = NaN; % this could be an issue as it
                                            % makes one direction favoured
     end
 
     if crossed
         initial_mat_c(y_index,nTheta) = crossed(2,1);
     else 
-        initial_mat_c(y_index,nTheta) = nTimes;
+        initial_mat_c(y_index,nTheta) = NaN;
     end
 
 
@@ -164,6 +165,12 @@ for y0 = linspace(0,2,100*2)
 
     %%Positions and orientations of particles at the end of runtime        
     XEndDistr=[XEndDistr [ X1(end); X2(end)]];
+
+    %if crossed
+    %    if hit
+    %        break
+    %    end
+    %end
 
     end
 end
@@ -195,66 +202,75 @@ figure(Name="y_dist");histogram(XEndDistr(1,:))
 xlabel({'y'})
 ylabel({'n(y)'})
 
-%----------------------------------------MAIN PLOT FOR THIS CODE
-% this plots the average crossing times for all the initial
-% position/orientations
+%----------------------------------------MAIN PLOTS FOR THIS CODE
+% plot average crossing times
 figure();
 theta_vals = linspace(0, 2*pi, 20);   % 20 orientation values
 y_vals = linspace(0, 2, 200);        % 200 y positions
 
-imagesc(theta_vals, y_vals, (sum_mat_c/sim_num)*dt_0);
+data_c = (sum_mat_c/sim_num)*dt_0;
+
+h_c = imagesc(theta_vals, y_vals, data_c);
 set(gca,'YDir','normal');            % y goes upward
 axis square;
 xlabel('\theta_0'); ylabel('y_0');
 title('Crossing Times');
 colorbar;
 
+% make NaN transparent (white)
+set(h_c, 'AlphaData', ~isnan(data_c));   
+set(gca, 'Color', 'w');              % background is white
 
-% Set nicer axis ticks
-xticks(0:pi/2:2*pi);                 % ticks every 90 degrees
+xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-yticks(0:0.5:2);                     % ticks at 0, 0.5, 1.0, 1.5, 2.0
+yticks(0:0.5:2);                     % ticks multiples of 0.5
 
-%------------------
-
-% this plots the average first hit times for all the initial
-% position/orientations
+%---------------------------------------
+% plot average first hit times
 figure();
 theta_vals = linspace(0, 2*pi, 20);   % 20 orientation values
 y_vals = linspace(0, 2, 200);        % 200 y positions
 
-imagesc(theta_vals, y_vals, flip((sum_mat_t/sim_num)*dt_0));
+data_t = (sum_mat_t/sim_num)*dt_0;
+
+h_t = imagesc(theta_vals, y_vals, data_t);
 set(gca,'YDir','normal');            % y goes upward
 axis square;
 xlabel('\theta_0'); ylabel('y_0');
 title('Hitting times (steps)');
 colorbar;
 
+% make NaN transparent (white)
+set(h_t, 'AlphaData', ~isnan(data_t));   
+set(gca, 'Color', 'w');              % background is white
 
-% Set nicer axis ticks
-xticks(0:pi/2:2*pi);                 % ticks every 90 degrees
+xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-yticks(0:0.5:2);                     % ticks at 0, 0.5, 1.0, 1.5, 2.0
+yticks(0:0.5:2);                     % ticks multiples of 0.5
 
-
-% this plots the average first hit orientation for all the initial
-% position/orientations
+%----------------------------------------
+% plot average first hit orientation
 figure();
 theta_vals = linspace(0, 2*pi, 20);   % 20 orientation values
 y_vals = linspace(0, 2, 200);        % 200 y positions
 
-imagesc(theta_vals, y_vals, flip(sum_mat_o/(sim_num*2*pi)));
+%data_o = sum_mat_o/(sim_num*2*pi);
+data_o = sum_mat_o/(sim_num);
+
+h_o = imagesc(theta_vals, y_vals, data_o);
 set(gca,'YDir','normal');            % y goes upward
 axis square;
 xlabel('\theta_0'); ylabel('y_0');
-title('Hitting times (steps)');
+title('Hitting orientations (theta)');
 colorbar;
 
+% make NaN transparent (white)
+set(h_o, 'AlphaData', ~isnan(data_o));   
+set(gca, 'Color', 'w');              % background is white
 
-% Set nicer axis ticks
-xticks(0:pi/2:2*pi);                 % ticks every 90 degrees
+xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-yticks(0:0.5:2);                     % ticks at 0, 0.5, 1.0, 1.5, 2.0
+yticks(0:0.5:2);                     % ticks multiples of 0.5
 %-------------------------------------
 
 end
