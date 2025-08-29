@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 4000; % # of simulated observations
+nPeriods = 1000; % # of simulated observations
 dt       =  0.1;%sampling time
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
@@ -48,7 +48,7 @@ crossed = [];
 
 
 % total number of simulations for each given point
-sim_num = 15;
+sim_num = 2;
 
 % initialise matrix to store every single simulation/run
 large_mat_t_u = zeros(200,20,sim_num);
@@ -60,7 +60,27 @@ large_mat_c = zeros(200,20,sim_num);
 %mini counter for self
 timer_count = 0;
 
+%%trajectory stuff
+% initialise variable storing the trajectory of a swimmer
+trajectory = zeros(2,nPeriods+1);
+traj_store = trajectory;
+y_samples = 10:20;
+theta_samples = 11:13;
+traj_count = 0;
+% initialise store for all the time points 
+% measuring the theta/y (end of periods)
+times = repmat(times,1,nPeriods+1);
+times(1) = 0;
+times = cumsum(times);
 
+t_count = 0; % counts time as the period passes 
+             % maybe could be useful for models 
+             % without fixed sampling times
+y_index = 0;
+
+
+
+%%simulation loop
 for iter = 1:sim_num
 disp(iter)
 hit_u = [];
@@ -73,14 +93,14 @@ current_mat_o_l = [];
 current_mat_c = [];
 y_index = 0;
 
-%%y-loop
+%% y-loop
 for y0 = linspace(0,2,100*2)
     % keeps track of the number of y values
     y_index = y_index + 1;
     
 
     timer_count = timer_count+1;
-    if timer_count == 40
+    if timer_count == 20
         disp(y0/2)
         timer_count = 0;
     end
@@ -170,12 +190,13 @@ for y0 = linspace(0,2,100*2)
     %%Positions and orientations of particles at the end of runtime        
     XEndDistr=[XEndDistr [ X1(end); X2(end)]];
 
-    %if crossed
-    %    if hit
-    %        break
-    %    end
-    %end
-
+    %stores the rest of the trajectory from
+    if ismember(y_index,y_samples) && ismember(nTheta,theta_samples)
+        traj_count = traj_count + 1;
+        trajectory(:,:) = [X1;X2];
+        traj_store(:,:,traj_count) = trajectory;
+    end
+    
     end
 end
 large_mat_t_u(:,:,iter) = current_mat_t_u;
@@ -183,8 +204,8 @@ large_mat_t_l(:,:,iter) = current_mat_t_l;
 large_mat_o_u(:,:,iter) = current_mat_o_u;
 large_mat_o_l(:,:,iter) = current_mat_o_l;
 large_mat_c(:,:,iter) = current_mat_c;
-
 end
+
 % takes average of all non NaN values
 averaged_mat_t_u = mean(large_mat_t_u,3,"omitnan");
 averaged_mat_t_l = mean(large_mat_t_l,3,"omitnan");
@@ -222,12 +243,13 @@ ylabel({'n(y)'})
 %--------------------------------
 % wall hitting angle distributions upper wall
 figure()
-histogram(theta_u)
+histogram(theta_u,BinWidth=0.05)
 xlabel({'\theta','[\pi rad]'})
 title('upper wall hitting angle');
 
 figure()
-polarhistogram(theta_u)
+polarhistogram(theta_u,BinWidth=0.05)
+xlabel({'\theta','[\pi rad]'})
 title('upper wall hitting angle');
 
 % wall hitting angle distribution upper wall
@@ -238,6 +260,7 @@ title('lower wall hitting angle');
 
 figure()
 polarhistogram(theta_u)
+xlabel({'\theta','[\pi rad]'})
 title('lower wall hitting angle');
 
 %----------------------------------------MAIN PLOTS FOR THIS CODE

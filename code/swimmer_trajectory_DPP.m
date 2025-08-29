@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 1000; % # of simulated observations
+nPeriods = 2000; % # of simulated observations
 dt       =  0.1;%sampling time
 times = dt;
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
@@ -29,8 +29,8 @@ nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 % initialise variable storing the trajectory of a swimmer
 trajectory = zeros(2,nPeriods+1);
 traj_store = trajectory;
-y_samples = 10:20;
-theta_samples = 11:13;
+y_samples = 180:190;
+theta_samples = 7:9;
 traj_count = 0;
 
 % initialise store for all the time points 
@@ -185,7 +185,7 @@ end
 
 % histogram thingy
 figure()
-histogram(mod(all_theta/pi,2),BinWidth=0.05)
+polarhistogram(mod(all_theta/pi,2),BinWidth=0.05)
 xlabel({'\theta','[\pi rad]'})
 
 end
