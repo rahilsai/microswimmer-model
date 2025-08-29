@@ -1,7 +1,6 @@
 # microswimmer-model
 modelling distributions of microswimmers in 2D channel Poissieulle flows with chemotaxis.
 
-
 Normal model with no run and tumble:
 - swimmer_trajectory_DPP
 can now store multiple trajectories for 
@@ -20,5 +19,27 @@ wall hitting angle distributions
 
 
 - first_hit_time (stop iteration after first hit)
+
+
+
+- diffusion measure
+
+- IBM_DPP
+
+- angle_capped_model
+
+- angle_uncapped_model
+i believe this does not work as this chooses a delay time,
+then it does a normal run and then flips at the delay time,
+then this 
+
+i have tried different parameters
+and attempted it to force
+
+- angle_instantaneous
+
+- memory_alt_params
+
+- memory_model
 
 

@@ -113,6 +113,8 @@ for y0 = linspace(0,2,100*2)
             X2(iPeriod+1)=XX(2);
         end
 
+    
+
     %stores the rest of the trajectory from
     if ismember(y_index,y_samples) && ismember(nTheta,theta_samples)
         traj_count = traj_count + 1;
