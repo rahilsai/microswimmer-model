@@ -1,5 +1,17 @@
-# microswimmer-model
-modelling distributions of microswimmers in 2D channel Poissieulle flows with chemotaxis.
+# microswimmer-models
+modelling distributions of microswimmers in 2D channel 
+Poissieulle flows with chemotaxis.
+
+### IBM_noRT_base_model
+this is the base model that is mostly taken from Smitha's
+paper. This is used to build the other models by adding the
+tumbling. Here the parameters are used as the base parameters
+as well in order to have as a reference point.
+
+### memory_model
+
+
+
 
 Normal model with no run and tumble:
 - swimmer_trajectory_DPP
@@ -24,7 +36,6 @@ wall hitting angle distributions
 
 - diffusion measure
 
-- IBM_DPP
 
 - angle_capped_model
 

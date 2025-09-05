@@ -42,7 +42,7 @@ nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 timer_count = 0;
 swimmer = 0;
 
-for  y0=linspace(0,2,100*2)
+for  y0=linspace(-1,1,100*2)
 
     timer_count = timer_count+1;
     if timer_count == 10
@@ -101,13 +101,13 @@ for  y0=linspace(0,2,100*2)
                 XX=XX+dX; %update position and orientation
 
                 %%update XX for periodic top and bottom wall
-                if XX(1)>2
-                    XX(1)=4-XX(1);
+                if XX(1)>1
+                    XX(1)=2-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
                     XX(2)=theta_new;
-                elseif XX(1)<0
-                    XX(1)=-XX(1);
+                elseif XX(1)<-1
+                    XX(1)=-2-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
                     XX(2)=theta_new;
@@ -124,13 +124,13 @@ for  y0=linspace(0,2,100*2)
                 XX=XX+dX; %update position and orientation
 
                 %%update XX for reflective top and bottom wall
-                if XX(1)>2
-                    XX(1)=4-XX(1);
+                if XX(1)>1
+                    XX(1)=2-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
                     XX(2)=theta_new;
-                elseif XX(1)<0
-                    XX(1)=-XX(1);
+                elseif XX(1)<-1
+                    XX(1)=-2-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
                     XX(2)=theta_new;
