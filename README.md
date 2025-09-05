@@ -42,4 +42,7 @@ and attempted it to force
 
 - memory_model
 
+- continuous_memory
+this is the main model where i suppose that the levels of
+the phosphorolated proteins dissipate exponentially
 
