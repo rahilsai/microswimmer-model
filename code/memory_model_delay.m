@@ -10,7 +10,7 @@ for Pe=100
 for beta=0.99
     tic
 XEndDistr=[];
-chi = 0.99 ; % chemotactic strength (dimensionless) 
+chi = 100 ; % chemotactic strength (dimensionless) 
 % (can alter this paramter)
 lambda_0 = 2; % tumble rate (s^-1)
 %Vs = 50*10^-6; % swimming speed (ms^-1)
@@ -18,8 +18,8 @@ lambda_0 = 2; % tumble rate (s^-1)
 W = 425*10^-6; % channel width (m)
 U = 1250*10^-6; % centreline flow velocity (ms−1)
 T = W/(2*U); %dimensional constant (s)
-st = 0.1; %sampling times
-T = st/T;
+%st = 0.1; %sampling times
+T = 0.1;
 %time frames considered non dimensional
 %T1s = 1/T; % 1 non dimensional second
 
@@ -27,8 +27,8 @@ T = st/T;
 lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old));
 
 
-nThetaTotal= 20; %10;%20;
-nPeriods = 100; % # of simulated observations
+nThetaTotal= 100; %10;%20;
+nPeriods = 1000; % # of simulated observations
 nSteps=20; % more smooth between t,tau,T;
 dt = T/20;
 %repT=repmat(T,nPeriods,1);
@@ -43,11 +43,11 @@ nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 timer_count = 0;
 swimmer = 0;
 
-for  y0=linspace(-1,1,100*2)
+for  y0=linspace(-1,1,1000*2)
 
     timer_count = timer_count+1;
     if timer_count == 10
-        disp(y0/2)
+        disp((y0+1)/2)
         timer_count = 0;
     end
 
@@ -106,15 +106,9 @@ for  y0=linspace(-1,1,100*2)
                 end
             end
 
-            XX(2) = XX(2) + jump;
-            
             %%Final position and orientation at end of iperiod
             X1(iPeriod+1)=XX(1);
             X2(iPeriod+1)=XX(2);
-        end
-        swimmer = swimmer + 1;
-        if swimmer == 444
-            str = XX;
         end
     %%Positions and orientations of particles at the end of runtime        
     XEndDistr=[XEndDistr [ X1(end); X2(end)]];
