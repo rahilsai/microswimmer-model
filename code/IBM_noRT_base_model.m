@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=100;%10;%20;
-nPeriods = 6000; % # of simulated observations
+nPeriods = 1000; % # of simulated observations
 dt       =  0.1;%sampling time
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
@@ -29,6 +29,7 @@ timer_count = 0;
 %%y-loop
 for  y0=linspace(-1,1,1000*2)
 
+    %percentage of loops 
     timer_count = timer_count+1;
     if timer_count == 100
         disp((y0+1)/2)
@@ -42,7 +43,6 @@ for  y0=linspace(-1,1,1000*2)
     X0=[y0;theta_0];
     X1=X0(1,1);
     X2=X0(2,1);
-    %MU = @(t,x) [nu*sin(x(2));-(sign(x(1))*x(1)*(1-beta*cos(2*x(2)))+(-1+beta*cos(2*x(2))))];
     MU = @(t,x) [nu*sin(x(2));x(1)*(1-beta*cos(2*x(2)))];
     DIFF = @(t,x) sqrt([2/Pe_T 0; 0 2/Pe]);
     nBrownians=size(DIFF(0,X0),2);

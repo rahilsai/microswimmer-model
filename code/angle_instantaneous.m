@@ -10,7 +10,7 @@ for Pe=100
 for beta=0.99
     tic
 XEndDistr=[];
-chi = 2; % chemotactic strength (dimensionless) 
+chi = 0.99; % chemotactic strength (dimensionless) 
 % (can alter this paramter)
 lambda_0 = 0.99; % tumble rate (s^-1)
 %Vs = 50*10^-6; % swimming speed (ms^-1)
@@ -21,13 +21,11 @@ T = W/(2*U); %dimensional constant (s)
 %time frames considered non dimensional
 %T1s = 1/T; % 1 non dimensional second
 
-
-
 %tumble rate used as parameter for exponential dist to sample tau's
 lambda = @(theta) (lambda_0-chi*sin(theta));
 
-nThetaTotal= 20; %10;%20;
-nPeriods = 1000; % # of simulated observations
+nThetaTotal= 100; %10;%20;
+nPeriods = 500; % # of simulated observations
 nSteps=20; % more smooth between t,tau;
 %repT=repmat(T,nPeriods,1);
 % TotalTime=nSteps*nPeriods*dt(1);
@@ -45,22 +43,17 @@ delay_count = 0;
 %mini counter for self
 timer_count = 0;
 
-% initialise variable storing the trajectory of a swimmer
-trajectory = []; 
-which = 0; %which number swimmer counter
-
 %%y-loop
-for y0=linspace(-1,1,100*2)
+for y0=linspace(-1,1,1000*2)
 
     timer_count = timer_count+1;
     if timer_count == 20
-        disp(y0/2)
+        disp((y0+1)/2)
         timer_count = 0;
     end
 
     %theta-loop
     for nTheta=1:nThetaTotal
-
         theta_0=2*pi*nTheta/nThetaTotal;  
         %%Initialise SDE
         X0=[y0;theta_0];
@@ -80,7 +73,7 @@ for y0=linspace(-1,1,100*2)
                 dX = drift * dt  +  diffusion * z * sqrt(dt);            
                 XX=XX+dX; %update position and orientation
           
-                if rand(1) < lambda(XX(2)+1)*dt
+                if rand(1) < lambda(XX(2))*dt
                     XX(2) = rand(1)*2*pi;
                 end
 
@@ -98,16 +91,10 @@ for y0=linspace(-1,1,100*2)
                     XX(2)=theta_new;
                 end
             end
-            
             %%Final position and orientation at end of iperiod
             X1(iPeriod+1)=XX(1);
             X2(iPeriod+1)=XX(2);
         end
-
-    which = which + 1;
-    if which == 250
-        trajectory = [X1;X2];
-    end
     %%Positions and orientations of particles at the end of runtime        
     XEndDistr=[XEndDistr [ X1(end); X2(end)]];
 
@@ -130,19 +117,14 @@ figure(Name="3D_fine");XEndDistr2=XEndDistr;XEndDistr2(2,:)=mod(XEndDistr2(2,:),
 axis square
 xlabel({'y'})
 ylabel({'\theta'})
+yticks(0:pi/2:2*pi)%%%
+yticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'})%%%
 colorbar
 view(2)
 view([90 -90])
 figure(Name="y_dist");histogram(XEndDistr(1,:))
 xlabel({'y'})
 ylabel({'n(y)'})
-
-% plot trajectory of a single swimmer
-figure()
-scatter(trajectory(2,:),trajectory(1,:))
-xlabel({'\theta','[\pi rad]'})
-ylabel({'y'})
-ylim([0 2])
 end
 toc
 end

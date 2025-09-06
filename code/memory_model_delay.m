@@ -28,8 +28,9 @@ lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old));
 
 
 nThetaTotal= 20; %10;%20;
-nPeriods = 1000; % # of simulated observations
+nPeriods = 100; % # of simulated observations
 nSteps=20; % more smooth between t,tau,T;
+dt = T/20;
 %repT=repmat(T,nPeriods,1);
 % TotalTime=nSteps*nPeriods*dt(1);
 %DT=repmat(dt,1,nSteps);
@@ -59,7 +60,7 @@ for  y0=linspace(-1,1,100*2)
         X1=X0(1,1);
         X2=X0(2,1);
 
-        MU = @(t,x) [nu*sin(x(2));-(sign(x(1))*x(1)*(1-beta*cos(2*x(2)))+(-1+beta*cos(2*x(2))))];
+        MU = @(t,x) [nu*sin(x(2));x(1)*(1-beta*cos(2*x(2)))];
         DIFF = @(t,x) sqrt([2/Pe_T 0; 0 2/Pe]);
 
         %nBrownians=size(DIFF(0,X0),2);
@@ -74,31 +75,22 @@ for  y0=linspace(-1,1,100*2)
 
             %so pluck out a tj from the exponential distribution based
             %on some parameters then
-
             y_old = y_new;
             y_new = XX(1);
-            tau = exprnd(1/(lambda(y_new,y_old)*T));
+            tau = exprnd(1/(lambda(y_new+1,y_old+1)*T));
+            jump_step = ceil(tau/dt);
             
-            if tau < T
-                jump = rand(1)*2*pi;
-                times_pre = linspace(0,tau,nSteps);
-                times_post = linspace(tau,T,nSteps);
-                pre_dt = times_pre(2);
-                post_dt = times_post(2);
-            elseif tau > T
-                jump = 0;
-                times_pre = linspace(0,T,2*nSteps);
-                times_post = [];
-                pre_dt = times_pre(2);
-            end
-            %-------------------------------
-            
-            for t_sub = times_pre
+            for iStep=1:nSteps
                 z = randn(2,1);
                 drift=MU(1,XX); %calculate drift term
                 diffusion=DIFF(1,XX); %calculate diffusion term
-                dX = drift * pre_dt  +  diffusion * z * sqrt(pre_dt);            
+                dX = drift * dt  +  diffusion * z * sqrt(dt);            
                 XX=XX+dX; %update position and orientation
+                
+                %%jumps in Period if sampled tau<T
+                if jump_step == iStep
+                    XX(2) = XX(2) + rand(1)*2*pi;
+                end
 
                 %%update XX for periodic top and bottom wall
                 if XX(1)>1
@@ -115,29 +107,6 @@ for  y0=linspace(-1,1,100*2)
             end
 
             XX(2) = XX(2) + jump;
-
-            for t_sub = times_post
-                z = randn(2,1); 
-                drift=MU(1,XX); %calculate drift term
-                diffusion=DIFF(1,XX); %calculate diffusion term
-                dX = drift * post_dt  +  diffusion * z * sqrt(post_dt);            
-                XX=XX+dX; %update position and orientation
-
-                %%update XX for reflective top and bottom wall
-                if XX(1)>1
-                    XX(1)=2-XX(1);
-                    theta_old=mod(-XX(2),2*pi);
-                    theta_new=theta_old;
-                    XX(2)=theta_new;
-                elseif XX(1)<-1
-                    XX(1)=-2-XX(1);
-                    theta_old=mod(-XX(2),2*pi);
-                    theta_new=theta_old;
-                    XX(2)=theta_new;
-                end
-            end
-            %------------------------------
-         
             
             %%Final position and orientation at end of iperiod
             X1(iPeriod+1)=XX(1);
