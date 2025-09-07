@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 1000; % # of simulated observations
+nPeriods = 500; % # of simulated observations
 dt       =  0.1;%sampling time
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
@@ -72,13 +72,13 @@ current_mat_c = [];
 y_index = 0;
 
 %%y-loop
-for y0 = linspace(0,2,100*2)
+for y0 = linspace(-1,1,100*2)
     % keeps track of the number of y values
     y_index = y_index + 1;
 
     timer_count = timer_count+1;
-    if timer_count == 40
-        disp(y0/2)
+    if timer_count == 20
+        disp((y0+1)/2)
         timer_count = 0;
     end
 
@@ -94,7 +94,7 @@ for y0 = linspace(0,2,100*2)
     X0=[y0;theta_0];
     X1=X0(1,1);
     X2=X0(2,1);
-    MU = @(t,x) [nu*sin(x(2));-(x(1)*(1-beta*cos(2*x(2)))+(-1+beta*cos(2*x(2))))];
+    MU = @(t,x) [nu*sin(x(2));x(1)*(1-beta*cos(2*x(2)))];
     DIFF = @(t,x) sqrt([2/Pe_T 0; 0 2/Pe]);
     nBrownians=size(DIFF(0,X0),2);
     sqrtDT=sqrt(dt);
@@ -112,22 +112,23 @@ for y0 = linspace(0,2,100*2)
                 dX = drift * dt(iPeriod)  +  diffusion * z * sqrtDT(iPeriod);            
                 XX=XX+dX; %update position and orientation
                 XX(2) = mod(XX(2), 2*pi);
+
                 %%update XX for periodic top and bottom wall
-                if XX(1)>2
+                if XX(1)>1
                     hit_u(:,end+1) = [XX(2);tStep];
-                    XX(1)=4-XX(1);
+                    XX(1)=2-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
                     XX(2)=theta_new;
-                elseif XX(1)<0
+                elseif XX(1)<-1
                     hit_l(:,end+1) = [XX(2);tStep];
-                    XX(1)=-XX(1);
+                    XX(1)=-2-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
                     XX(2)=theta_new;
                 end
                 % checks if channel crossing condition has been achieved
-                if XX(1)>1
+                if XX(1)>0
                     crossed(:,end+1) = [XX(2);tStep];
                 end
             end
