@@ -207,6 +207,8 @@ ylabel({'n(y)'})
 figure()
 histogram(theta_u)
 xlabel({'\theta','[\pi rad]'})
+xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
+xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 title('upper wall hitting angle');
 
 figure()
@@ -217,10 +219,12 @@ title('upper wall hitting angle');
 figure()
 histogram(theta_l)
 xlabel({'\theta','[\pi rad]'})
+xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
+xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 title('lower wall hitting angle');
 
 figure()
-polarhistogram(theta_u)
+polarhistogram(theta_l)
 title('lower wall hitting angle');
 
 %----------------------------------------MAIN PLOTS FOR THIS CODE
