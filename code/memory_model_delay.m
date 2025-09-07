@@ -18,10 +18,6 @@ lambda_0 = 2; % tumble rate (s^-1)
 W = 425*10^-6; % channel width (m)
 U = 1250*10^-6; % centreline flow velocity (ms−1)
 T = W/(2*U); %dimensional constant (s)
-%st = 0.1; %sampling times
-T = 0.1;
-%time frames considered non dimensional
-%T1s = 1/T; % 1 non dimensional second
 
 %tumble rate used as parameter for exponential dist to sample tau's
 lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old));
@@ -53,17 +49,13 @@ for  y0=linspace(-1,1,1000*2)
 
     %theta-loop
     for nTheta=1:nThetaTotal
-
         theta_0=2*pi*nTheta/nThetaTotal;  
         %%Initialise SDE
         X0=[y0;theta_0];
         X1=X0(1,1);
         X2=X0(2,1);
-
         MU = @(t,x) [nu*sin(x(2));x(1)*(1-beta*cos(2*x(2)))];
         DIFF = @(t,x) sqrt([2/Pe_T 0; 0 2/Pe]);
-
-        %nBrownians=size(DIFF(0,X0),2);
         XX1=X1;
         XX2=X2;
         XX=[XX1; XX2]; %Initial position and orientations in time
@@ -72,11 +64,9 @@ for  y0=linspace(-1,1,1000*2)
         y_new = 0;
 
         for iPeriod=1:nPeriods %loop periods
-
-            %so pluck out a tj from the exponential distribution based
-            %on some parameters then
             y_old = y_new;
             y_new = XX(1);
+            %sample delay time from exponential distribution
             tau = exprnd(1/(lambda(y_new+1,y_old+1)*T));
             jump_step = ceil(tau/dt);
             

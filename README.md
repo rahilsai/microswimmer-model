@@ -24,7 +24,7 @@ at each step as the rate multiplied by the dt as when the dt is
 small enough I then get the average number of steps within 
 P(flip|theta) = lambda(XX(2)) * dt
 
-### memory_model_delay (need to plot)
+### memory_model_delay (capped)
 Here I use the T as the length of a period then divide it by 
 nSteps to get the dt (timesteps). At the start of each period
 I calculate a delay jump time tau based on the concentrations 
@@ -35,6 +35,11 @@ If the number of delay step are greater than the number of steps
 in a period (so if the tau>T), the jump just never happens and 
 a new concentration or attractant is measured.
 
+### angle_capped_model
+Similarly to the memory,I use T as the length of a period and so
+this is the maximum delay time. Here an angle is sampled at the 
+start of each period and then the tumble rate is calculated from
+this and is then used to calculate the delay time.
 
 - angle_capped_model
 

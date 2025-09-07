@@ -35,7 +35,7 @@ sampleTimes=cumsum([T0;T(:)]);
 nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 
 % the time steps used
-dt = 0.1/(nSteps);
+dt = 0.1/nSteps;
 
 % counter variable for timestep delay of tumble
 delay_count = 0;
