@@ -22,7 +22,7 @@ This causes a bias towards the upper wall.
 Then for the actual tumbling, I take the probability of flipping 
 at each step as the rate multiplied by the dt as when the dt is 
 small enough I then get the average number of steps within 
-P(flip|theta) = lambda(XX(2)) * dt
+$P(flip|\theta) = \lambda(\theta) * dt$
 
 ### memory_model_delay (capped)
 Here I use the T as the length of a period then divide it by 
@@ -45,16 +45,23 @@ this and is then used to calculate the delay time.
 The same as angle capped model except yhere is no limit to the 
 value the delay time tau can be.
 
-I believe this does not work as this chooses a delay time,
-then it does a normal run and then flips at the delay time,
-then this 
+I believe this does not work as when choosing a delay time, this
+is assuming that the rate is constant throughout that run between
+the time sampled and tumble delay time tau
 
-I have tried different parameters
-and attempted it to force
+I have tried different parameters and attempted it to force
+it to no avail
 
-- continuous_memory
-this is the main model where i suppose that the levels of
-the phosphorolated proteins dissipate exponentially
+### weighted_memory_model
+The main model where I assume the levels of the phosphorolated 
+proteins to dissipate exponentially. This assumption is used
+in choosing the weighting,as here I use an exponential decay 
+weighting where older values are weighted less. I also take
+a baseline value as the "old concentration", simply the oldest 
+value, and take the difference with the current weighted memory 
+average to get the tumble rate. I take the time of adaption to
+be about 200 dt (sub timesteps), so the oldest value is 200
+steps behind.
 
 ## Plots/figure methods
 Normal model with no run and tumble:
