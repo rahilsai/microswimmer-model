@@ -66,7 +66,7 @@ steps behind.
 ## Plots/figure methods
 Normal model with no run and tumble:
 
-### Base_first_hit_plots
+### base_first_hit_plots
 Here we use NaN if wall not hit or threshold not passed and take
 the average of all the values non NaN values for each given initial
 condition.
