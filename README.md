@@ -64,7 +64,8 @@ be about 200 dt (sub timesteps), so the oldest value is 200
 steps behind.
 
 ## Plots/figure methods
-Normal model with no run and tumble:
+all the scripts beginning with "base" mean that the base 
+model with no run and tumble is used
 
 ### base_first_hit_plots
 Here we use NaN if wall not hit or threshold not passed and take
@@ -75,6 +76,11 @@ This script produces:
 - first hit time/angle plots for upper and lower wall
 - first crossing channel time for a given y threshold
 - wall hitting angle distributions for upper and lower wall
+
+applied all this to the weighted memory model in:
+weighted_memory_first_hit
+
+
 
 
 - diffusion measure

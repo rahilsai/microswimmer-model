@@ -10,26 +10,35 @@ for Pe=100
 for beta=0.99
     tic
 XEndDistr=[];
+chi = 100; % chemotactic strength (dimensionless)
+lambda_0 = 2; % tumble rate (s^-1)
+W = 425*10^-6; % channel width (m)
+U = 1250*10^-6; % centreline flow velocity (ms−1)
+T = W/(2*U); %dimensional constant (s)
 
-nThetaTotal=100;%10;%20;
+%tumble rate used as parameter for exponential dist to sample tau's
+lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old));
+
+nThetaTotal= 100; %10;%20;
 nYTotal=100*2;
 nPeriods = 3000; % # of simulated observations
-dt = 0.1;%sampling time
-nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
-dt=repmat(dt,nPeriods,1);
-dt=dt/nSteps;
-dt_0 = dt(1); % just for self use as single value
-DT=repmat(dt,1,nSteps);
+nSteps=20; % more smooth between t,tau;
 T0=0;
-sampleTimes=cumsum([T0;DT(:)]);
+sampleTimes=cumsum([T0;T(:)]);
 nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 
-% initialise store for all the time points 
-% measuring the theta/y (end of periods)
-times = [];
-t_count = 0; % counts time as the period passes 
-             % maybe could be useful for models 
-             % without fixed sampling times
+% the time steps used
+dt = 0.1/(nSteps);
+
+% initailising past history of samples
+m_len = 200;
+m = zeros(m_len);
+weighting = linspace(0,2,m_len); %linear weighting
+w_exp = exp(-weighting); % exponential decay
+weighting_exp = w_exp / mean(w_exp); % normalise to get weights
+weighting = flip(weighting_exp); % set weighting as exponential instead of linear
+mwa = 0; %mean weighted average
+baseline = 0; %oldest value 
 
 %% initialise method
 % initialise hitting_times and orientation hit
@@ -85,29 +94,34 @@ for y0=linspace(-1,1,nYTotal)
     hit_l = [];
     crossed = [];
 
-    theta_0=2*pi*nTheta/nThetaTotal  ;  
+    %resets memory to current y position
+    m = repmat(y0,1,m_len);
+
+    theta_0=2*pi*nTheta/nThetaTotal;  
     %%Initialise SDE
     X0=[y0;theta_0];
     X1=X0(1,1);
     X2=X0(2,1);
     MU = @(t,x) [nu*sin(x(2));x(1)*(1-beta*cos(2*x(2)))];
     DIFF = @(t,x) sqrt([2/Pe_T 0; 0 2/Pe]);
-    nBrownians=size(DIFF(0,X0),2);
-    sqrtDT=sqrt(dt);
-    Gaussians=randn(nBrownians,nTimes);
     XX1=X1;
     XX2=X2;
     XX=[XX1; XX2]; %Initial position and orientations in time
         for iPeriod=1:nPeriods %loop periods
-            for iStep=1:nSteps %loop steps per period
-                tStep = nSteps * (iPeriod - 1) + iStep;
-                t = sampleTimes(tStep);
-                z = Gaussians(:,tStep);
-                drift=MU(t,XX); %calculate drift term
-                diffusion=DIFF(t,XX); %calculate diffusion term
-                dX = drift * dt(iPeriod)  +  diffusion * z * sqrtDT(iPeriod);            
+            for iStep=1:nSteps
+                z = randn(2,1);
+                drift=MU(1,XX); %calculate drift term
+                diffusion=DIFF(1,XX); %calculate diffusion term
+                dX = drift * dt  +  diffusion * z * sqrt(dt);            
                 XX=XX+dX; %update position and orientation
                 XX(2) = mod(XX(2), 2*pi);
+
+                mwa = mean(m.*weighting); % mean weighted average
+                baseline = m(1);
+                if rand(1) < lambda(mwa+1,baseline+1)*T*dt
+                    XX(2) = XX(2) + rand(1)*2*pi;
+                end
+                m = [m(2:end),XX(1)];
 
                 %%update XX for periodic top and bottom wall
                 if XX(1)>1
@@ -128,11 +142,12 @@ for y0=linspace(-1,1,nYTotal)
                     crossed(:,end+1) = [XX(2);tStep];
                 end
             end
+
             %%Final position and orientation at end of iperiod
             X1(iPeriod+1)=XX(1);
             X2(iPeriod+1)=XX(2);
         end
-
+    
     % if upper wall hit, stores values of first hit 
     if hit_u
         current_mat_t_u(y_index,nTheta) = hit_u(2,1);
@@ -352,4 +367,3 @@ cb.TickLabels = {'0','\pi/2','\pi','3\pi/2','2\pi'};
 end
 toc
 end
-
