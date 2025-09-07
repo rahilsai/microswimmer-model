@@ -18,20 +18,13 @@ lambda_0 = 2; % tumble rate (s^-1)
 W = 425*10^-6; % channel width (m)
 U = 1250*10^-6; % centreline flow velocity (ms−1)
 T = W/(2*U); %dimensional constant (s)
-%nonT = 1/T;
-%time frames considered non dimensional
-%T1s = 1/T; % 1 non dimensional second
 
 %tumble rate used as parameter for exponential dist to sample tau's
 lambda = @(theta) (lambda_0-chi*sin(theta));
-%lambda = @(theta) lambda_0;
 
 nThetaTotal= 100; %10;%20;
 nPeriods = 500; % # of simulated observations
 nSteps=20; % more smooth between t,tau,T;
-%repT=repmat(T,nPeriods,1);
-% TotalTime=nSteps*nPeriods*dt(1);
-%DT=repmat(dt,1,nSteps);
 T0=0;
 sampleTimes=cumsum([T0;T(:)]);
 nTimes = nPeriods * nSteps;        % Total # of time steps simulated
@@ -48,13 +41,12 @@ which = 0; %which number swimmer counter
 
 %%y-loop
 for  y0=linspace(-1,1,1000*2)
-
+    %timer for self
     timer_count = timer_count+1;
     if timer_count == 20
         disp((y0+1)/2)
         timer_count = 0;
     end
-
     %theta-loop
     for nTheta=1:nThetaTotal
         theta_0=2*pi*nTheta/nThetaTotal;  

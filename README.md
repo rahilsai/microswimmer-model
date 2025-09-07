@@ -41,14 +41,15 @@ this is the maximum delay time. Here an angle is sampled at the
 start of each period and then the tumble rate is calculated from
 this and is then used to calculate the delay time.
 
-- angle_capped_model
+### angle_uncapped_model
+The same as angle capped model except yhere is no limit to the 
+value the delay time tau can be.
 
-- angle_uncapped_model
-i believe this does not work as this chooses a delay time,
+I believe this does not work as this chooses a delay time,
 then it does a normal run and then flips at the delay time,
 then this 
 
-i have tried different parameters
+I have tried different parameters
 and attempted it to force
 
 - continuous_memory

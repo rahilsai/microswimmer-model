@@ -18,20 +18,13 @@ lambda_0 = 2; % tumble rate (s^-1)
 W = 425*10^-6; % channel width (m)
 U = 1250*10^-6; % centreline flow velocity (ms−1)
 T = W/(2*U); %dimensional constant (s)
-%time frames considered non dimensional
-%T1s = 1/T; % 1 non dimensional second
-
-
 
 %tumble rate used as parameter for exponential dist to sample tau's
-lambda = @(theta) 90*(lambda_0-chi*sin(theta));
+lambda = @(theta) (lambda_0-chi*sin(theta));
 
-nThetaTotal= 20; %10;%20;
-nPeriods = 3000; % # of simulated observations
+nThetaTotal= 100; %10;%20;
+nPeriods = 1000; % # of simulated observations
 nSteps=20; % more smooth between t,tau;
-%repT=repmat(T,nPeriods,1);
-% TotalTime=nSteps*nPeriods*dt(1);
-%DT=repmat(dt,1,nSteps);
 T0=0;
 sampleTimes=cumsum([T0;T(:)]);
 nTimes = nPeriods * nSteps;        % Total # of time steps simulated
@@ -45,49 +38,41 @@ delay_count = 0;
 %mini counter for self
 timer_count = 0;
 
-% initialise variable storing the trajectory of a swimmer
-trajectory = []; 
-which = 0; %which number swimmer counter
-
 %%y-loop
-for y0=linspace(0,2,200*2)
-
+for y0=linspace(-1,1,1000*2)
+    %timer for self
     timer_count = timer_count+1;
     if timer_count == 20
-        disp(y0/2)
+        disp((y0+1)/2)
         timer_count = 0;
     end
-
     %theta-loop
     for nTheta=1:nThetaTotal
-
         theta_0=2*pi*nTheta/nThetaTotal;  
         %%Initialise SDE
         X0=[y0;theta_0];
         X1=X0(1,1);
         X2=X0(2,1);
-
-        MU = @(t,x) [nu*sin(x(2));-(sign(x(1))*x(1)*(1-beta*cos(2*x(2)))+(-1+beta*cos(2*x(2))))];
+        MU = @(t,x) [nu*sin(x(2));x(1)*(1-beta*cos(2*x(2)))];
         DIFF = @(t,x) sqrt([2/Pe_T 0; 0 2/Pe]);
-
-        %nBrownians=size(DIFF(0,X0),2);
         XX1=X1;
         XX2=X2;
         XX=[XX1; XX2]; %Initial position and orientations in time
 
+        %sample initial time delay
         tau = exprnd(1/(lambda(XX(2))*T));
         delay = ceil(tau/dt);
         delay_count = 0;
 
         for iPeriod=1:nPeriods %loop periods
+            for iStep=1:nSteps
+                z = randn(2,1);
+                drift=MU(0.1,XX); %calculate drift term
+                diffusion=DIFF(0.1,XX); %calculate diffusion term
+                dX = drift * dt  +  diffusion * z * sqrt(dt);            
+                XX=XX+dX; %update position and orientation
 
-            %so pluck out a tj from the exponential distribution based
-            %on some parameters then
-            
-            
-            %-------------------------------
-            for t_sub = nSteps
-                if delay_count == delay|delay_count == 100
+                if delay_count == delay
                     tau = exprnd(1/(lambda(XX(2))*T));
                     delay = ceil(tau/dt);
                     delay_count = 0;
@@ -95,40 +80,25 @@ for y0=linspace(0,2,200*2)
                     XX(2) = XX(2) + jump;
                 end
                 delay_count = delay_count + 1;
-                
-                z = randn(2,1);
-                drift=MU(0.1,XX); %calculate drift term
-                diffusion=DIFF(0.1,XX); %calculate diffusion term
-                dX = drift * dt  +  diffusion * z * sqrt(dt);            
-                XX=XX+dX; %update position and orientation
 
                 %%update XX for periodic top and bottom wall
-                if XX(1)>2
-                    XX(1)=4-XX(1);
+                if XX(1)>1
+                    XX(1)=2-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
                     XX(2)=theta_new;
-                elseif XX(1)<0
-                    XX(1)=-XX(1);
+                elseif XX(1)<-1
+                    XX(1)=-2-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
                     XX(2)=theta_new;
                 end
             end
 
-            
-            %------------------------------
-         
-            
             %%Final position and orientation at end of iperiod
             X1(iPeriod+1)=XX(1);
             X2(iPeriod+1)=XX(2);
         end
-
-    which = which + 1;
-    if which == 250
-        trajectory = [X1;X2];
-    end
     %%Positions and orientations of particles at the end of runtime        
     XEndDistr=[XEndDistr [ X1(end); X2(end)]];
 
@@ -158,12 +128,6 @@ figure(Name="y_dist");histogram(XEndDistr(1,:))
 xlabel({'y'})
 ylabel({'n(y)'})
 
-% plot trajectory of a single swimmer
-figure()
-scatter(trajectory(2,:),trajectory(1,:))
-xlabel({'\theta','[\pi rad]'})
-ylabel({'y'})
-ylim([0 2])
 end
 toc
 end
