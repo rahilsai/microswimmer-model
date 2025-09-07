@@ -21,8 +21,8 @@ T = W/(2*U); %dimensional constant (s)
 %tumble rate used as parameter for exponential dist to sample tau's
 lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old));
 
-nThetaTotal= 20; %10;%20;
-nPeriods = 500; % # of simulated observations
+nThetaTotal= 100; %10;%20;
+nPeriods = 1000; % # of simulated observations
 nSteps=20; % more smooth between t,tau;
 T0=0;
 sampleTimes=cumsum([T0;T(:)]);
@@ -45,7 +45,7 @@ mwa = 0; %mean weighted average
 baseline = 0; %oldest value
 
 %%y-loop
-for y0=linspace(-1,1,100*2)
+for y0=linspace(-1,1,1000*2)
 
     timer_count = timer_count+1;
     if timer_count == 20

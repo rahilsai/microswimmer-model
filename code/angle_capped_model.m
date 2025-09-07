@@ -137,9 +137,6 @@ xlabel({'\theta','[\pi rad]'})
 ylabel({'y'})
 ylim([0 2])
 
-
-
-%----------------GPT--------------------
 % Make a colour vector based on the point index
 t = 1:size(trajectory, 2);  % time step index
 figure()
@@ -148,9 +145,8 @@ xlabel({'\theta','[\pi rad]'})
 ylabel({'y'})
 ylim([0 2])
 % Choose a colormap and add colourbar
-colormap(jet)   % or 'parula', 'turbo', etc.
+colormap(jet)
 colorbar
-%----------------------------------------
 end
 toc
 end

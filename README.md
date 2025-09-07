@@ -66,6 +66,17 @@ steps behind.
 ## Plots/figure methods
 Normal model with no run and tumble:
 
+### Base_first_hit_plots
+Here we use NaN if wall not hit or threshold not passed and take
+the average of all the values non NaN values for each given initial
+condition.
+
+This script produces:
+- first hit time/angle plots for upper and lower wall
+- first crossing channel time for a given y threshold
+- wall hitting angle distributions for upper and lower wall
+
+
 - diffusion measure
 
 - swimmer_trajectory_DPP
@@ -74,12 +85,6 @@ a y by theta grid of initial points
 also produces the period histogram which
 may make the period_histogram obsolete
 
-- Channel_crossing
-uses NaN, or averages from values that are not NaN
-finds first hit time/angle of each wall
-finds crossing channel time
-
-wall hitting angle distributions
 
 - period_histogram  (for reorientation times)
 

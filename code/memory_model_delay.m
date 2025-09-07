@@ -24,7 +24,7 @@ lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old));
 
 
 nThetaTotal= 100; %10;%20;
-nPeriods = 1000; % # of simulated observations
+nPeriods = 500; % # of simulated observations
 nSteps=20; % more smooth between t,tau,T;
 dt = T/20;
 %repT=repmat(T,nPeriods,1);

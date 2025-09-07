@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 4000; % # of simulated observations
+nPeriods = 1000; % # of simulated observations
 dt       =  0.1;%sampling time
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
@@ -46,20 +46,18 @@ simulation_count = 0;
 current_mat_c = [];
 crossed = [];
 
-
 % total number of simulations for each given point
-sim_num = 15;
+sim_num = 1;
 
 % initialise matrix to store every single simulation/run
-large_mat_t_u = zeros(200,20,sim_num);
-large_mat_t_l = zeros(200,20,sim_num);
-large_mat_o_u = zeros(200,20,sim_num);
-large_mat_o_l = zeros(200,20,sim_num);
-large_mat_c = zeros(200,20,sim_num);
+large_mat_t_u = zeros(200,nThetaTotal,sim_num);
+large_mat_t_l = zeros(200,nThetaTotal,sim_num);
+large_mat_o_u = zeros(200,nThetaTotal,sim_num);
+large_mat_o_l = zeros(200,nThetaTotal,sim_num);
+large_mat_c = zeros(200,nThetaTotal,sim_num);
 
 %mini counter for self
 timer_count = 0;
-
 
 for iter = 1:sim_num
 disp(iter)
@@ -77,7 +75,6 @@ y_index = 0;
 for y0 = linspace(0,2,100*2)
     % keeps track of the number of y values
     y_index = y_index + 1;
-    
 
     timer_count = timer_count+1;
     if timer_count == 40
