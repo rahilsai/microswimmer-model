@@ -78,7 +78,7 @@ This script produces:
 - wall hitting angle distributions for upper and lower wall
 
 applied all this to the weighted memory model in:
-weighted_memory_first_hit
+weighted_memory_first_hit.m
 
 ### swimmer_trajectory_plots
 stores multiple trajectories for grid of initial points.
@@ -95,6 +95,9 @@ This script produces:
 - plot angle against time, but mod 2*pi
 - plots trajectory of many swimmers
 - histogram of angles of all trajectories
+
+applied all this to the weighted memory model in:
+weighted_memory_diffusion_trajectory.m
 
 ### diffusion_measure
 no need, just here in case
