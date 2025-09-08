@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 1000; % # of simulated observations
+nPeriods = 100; % # of simulated observations
 dt       =  0.1;%sampling time
 times = dt;
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
@@ -29,7 +29,7 @@ nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 % initialise variable storing the trajectory of a swimmer
 trajectory = zeros(2,nPeriods+1);
 traj_store = trajectory;
-y_samples = 180:185;
+y_samples = 10:11;
 theta_samples = 7:9;
 traj_count = 0;
 
@@ -39,20 +39,13 @@ times = repmat(times,1,nPeriods+1);
 times(1) = 0;
 times = cumsum(times);
 
-
-t_count = 0; % counts time as the period passes 
-             % maybe could be useful for models 
-             % without fixed sampling times
-y_index = 0;
-
 % total number of simulations for each given point
 sim_num = 1;
-
 
 %mini counter for self
 timer_count = 0;
 
-% stores the squared displacement for given times
+% stores the squared displacement for given times (DIFFUSION)
 sqd_tot = zeros(1,nPeriods+1);
 
 for iter = 1:sim_num
@@ -113,9 +106,9 @@ for y0 = linspace(-1,1,100*2)
             X2(iPeriod+1)=XX(2);
         end
 
-    %store squared displacement at the end of each period
-    %so store all squared displacement
+    %store squared displacement at end of each period (DIFFUSION)
     r = (X1 - y0).^2;
+    %keeps running sum across trajectories of squared displacements
     sqd_tot = sqd_tot + r;
 
     %stores the rest of the trajectory from
@@ -155,7 +148,7 @@ figure(Name="y_dist");histogram(XEndDistr(1,:))
 xlabel({'y'})
 ylabel({'n(y)'})
 
-% DIFFUSION plot
+% DIFFUSION plot (DIFFUSION)
 msq = sqd_tot/(200*nThetaTotal*sim_num);
 % this is the MSD agaisnt time
 figure()
@@ -168,7 +161,7 @@ figure()
 scatter(trajectory(2,:)/pi,trajectory(1,:))
 xlabel({'\theta','[\pi rad]'})
 ylabel({'y'})
-ylim([0 2])
+ylim([-1 1])
 
 % plot angle against time
 %figure()
@@ -188,7 +181,7 @@ ylabel({'\theta','[\pi rad]'})
 %    scatter(traj_store(2,:,traj)/pi,traj_store(1,:,traj))
 %    xlabel({'\theta','[\pi rad]'})
 %    ylabel({'y'})
-%    ylim([0 2])
+%    ylim([-1 1])
 %end
 
 all_theta = [];
