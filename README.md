@@ -81,9 +81,15 @@ applied all this to the weighted memory model in:
 weighted_memory_first_hit
 
 ### swimmer_trajectory_plots
-stores multiple trajectories for grid of initial points
+stores multiple trajectories for grid of initial points.
+calculates the squared displacement from initial point
+for every trajectory and then takes the average of this
+squared displacement for each timestep across the different
+trajectories to get a MSD(mean squared displacement)
+at each timestep.
 
 This script produces:
+- plot MSD against time (diffusion plot)
 - plot trajectory of a single swimmer
 - plot angle against time
 - plot angle against time, but mod 2*pi
@@ -91,6 +97,6 @@ This script produces:
 - histogram of angles of all trajectories
 
 ### diffusion_measure
-
+no need, just here in case
 
 

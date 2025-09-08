@@ -29,8 +29,8 @@ nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 % initialise variable storing the trajectory of a swimmer
 trajectory = zeros(2,nPeriods+1);
 traj_store = trajectory;
-y_samples = 180:190;
-theta_samples = 7:9;
+y_samples = 1:200;
+theta_samples = 1:20;
 traj_count = 0;
 
 % initialise store for all the time points 
