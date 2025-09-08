@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 1000; % # of simulated observations
+nPeriods = 100; % # of simulated observations
 dt       =  0.1;%sampling time
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
@@ -188,28 +188,6 @@ figure()
 scatter(times,mod(trajectory(2,:)+0.5/pi,1))
 xlabel({'t'})
 ylabel({'\theta','[\pi rad]'})
-
-
-%-------------GPT-----------------------
-
-% this plots the average first hit times for all the initial
-% position/orientations
-figure();
-theta_vals = linspace(0, 2*pi, 20);   % 20 orientation values
-y_vals = linspace(0, 2, 200);        % 200 y positions
-
-imagesc(theta_vals, y_vals, flip((sum_mat_t/1)*dt_0));
-set(gca,'YDir','normal');            % y goes upward
-axis square;
-xlabel('\theta_0'); ylabel('y_0');
-title('Hitting times (steps)');
-colorbar;
-
-
-% Set nicer axis ticks
-xticks(0:pi/2:2*pi);                 % ticks every 90 degrees
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-yticks(0:0.5:2);                     % ticks at 0, 0.5, 1.0, 1.5, 2.0
 
 
 % this plots the average first hit orientation for all the initial

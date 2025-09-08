@@ -95,5 +95,3 @@ may make the period_histogram obsolete
 - period_histogram  (for reorientation times)
 
 
-- first_hit_time (stop iteration after first hit)
-

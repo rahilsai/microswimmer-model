@@ -109,6 +109,7 @@ for y0=linspace(-1,1,nYTotal)
     XX=[XX1; XX2]; %Initial position and orientations in time
         for iPeriod=1:nPeriods %loop periods
             for iStep=1:nSteps
+                tStep = nSteps * (iPeriod - 1) + iStep;
                 z = randn(2,1);
                 drift=MU(1,XX); %calculate drift term
                 diffusion=DIFF(1,XX); %calculate diffusion term
@@ -220,8 +221,9 @@ ylabel({'n(y)'})
 %--------------------------------
 % wall hitting angle distributions upper wall
 figure()
-histogram(theta_u)
+histogram(theta_u,NumBins=60)
 xlabel({'\theta','[\pi rad]'})
+xlim([0 2*pi])
 xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 title('upper wall hitting angle');
@@ -232,8 +234,9 @@ title('upper wall hitting angle');
 
 % wall hitting angle distribution upper wall
 figure()
-histogram(theta_l)
+histogram(theta_l,NumBins=60)
 xlabel({'\theta','[\pi rad]'})
+xlim([0 2*pi])
 xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 title('lower wall hitting angle');
@@ -248,7 +251,7 @@ figure();
 theta_vals = linspace(0, 2*pi, nThetaTotal);   % 20 orientation values
 y_vals = linspace(0, 2, nYTotal);        % 200 y positions
 
-data_c = (averaged_mat_c)*dt_0;
+data_c = (averaged_mat_c)*dt;
 
 h_c = imagesc(theta_vals, y_vals, data_c);
 set(gca,'YDir','normal');            % y goes upward
@@ -272,7 +275,7 @@ figure();
 theta_vals = linspace(0, 2*pi, nThetaTotal);   % 20 orientation values
 y_vals = linspace(0, 2, nYTotal);        % 200 y positions
 
-data_t_u = (averaged_mat_t_u)*dt_0;
+data_t_u = (averaged_mat_t_u)*dt;
 
 h_t_u = imagesc(theta_vals, y_vals, data_t_u);
 set(gca,'YDir','normal');            % y goes upward
@@ -323,7 +326,7 @@ figure();
 theta_vals = linspace(0, 2*pi, nThetaTotal);   % 20 orientation values
 y_vals = linspace(0, 2, nYTotal);        % 200 y positions
 
-data_t_l = (averaged_mat_t_l)*dt_0;
+data_t_l = (averaged_mat_t_l)*dt;
 
 h_t_l = imagesc(theta_vals, y_vals, data_t_l);
 set(gca,'YDir','normal');            % y goes upward
