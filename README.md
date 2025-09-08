@@ -91,7 +91,14 @@ a y by theta grid of initial points
 also produces the period histogram which
 may make the period_histogram obsolete
 
+plot trajectory of a single swimmer
+
 
 - period_histogram  (for reorientation times)
+plot trajectory of a single swimmer
+plot angle against time
+attempt at making something to find priod lengths
+
+histogram thingy (now implemented into simmer_trajectory as well)
 
 
