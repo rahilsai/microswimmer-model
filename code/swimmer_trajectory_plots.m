@@ -165,7 +165,7 @@ scatter(times,trajectory(2,:)/pi)
 xlabel({'t'})
 ylabel({'\theta','[\pi rad]'})
 
-%attempt at making something to find priod lengths
+% attempt at making something to find priod lengths
 figure()
 scatter(times,mod(trajectory(2,:)/pi+0.5,1))
 xlabel({'t'})

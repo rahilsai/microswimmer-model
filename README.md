@@ -80,25 +80,17 @@ This script produces:
 applied all this to the weighted memory model in:
 weighted_memory_first_hit
 
+### swimmer_trajectory_plots
+stores multiple trajectories for grid of initial points
 
+This script produces:
+- plot trajectory of a single swimmer
+- plot angle against time
+- plot angle against time, but mod 2*pi
+- plots trajectory of many swimmers
+- histogram of angles of all trajectories
 
+### diffusion_measure
 
-- diffusion measure
-
-- swimmer_trajectory_DPP
-can now store multiple trajectories for 
-a y by theta grid of initial points
-also produces the period histogram which
-may make the period_histogram obsolete
-
-plot trajectory of a single swimmer
-
-
-- period_histogram  (for reorientation times)
-plot trajectory of a single swimmer
-plot angle against time
-attempt at making something to find priod lengths
-
-histogram thingy (now implemented into simmer_trajectory as well)
 
 
