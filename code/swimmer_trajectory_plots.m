@@ -52,6 +52,8 @@ sim_num = 1;
 %mini counter for self
 timer_count = 0;
 
+% stores the squared displacement for given times
+sqd_tot = zeros(1,nPeriods+1);
 
 for iter = 1:sim_num
 disp(iter)
@@ -113,7 +115,10 @@ for y0 = linspace(0,2,100*2)
             X2(iPeriod+1)=XX(2);
         end
 
-    
+    %store squared displacement at the end of each period
+    %so store all squared displacement
+    r = (X1 - y0).^2;
+    sqd_tot = sqd_tot + r;
 
     %stores the rest of the trajectory from
     if ismember(y_index,y_samples) && ismember(nTheta,theta_samples)
@@ -152,6 +157,14 @@ figure(Name="y_dist");histogram(XEndDistr(1,:))
 xlabel({'y'})
 ylabel({'n(y)'})
 
+% DIFFUSION plot
+msq = sqd_tot/(200*nThetaTotal*sim_num);
+% this is the MSD agaisnt time
+figure()
+scatter(times,msq)
+xlabel({'t'})
+ylabel({'<r^2>'})
+
 % plot trajectory of a single swimmer
 figure()
 scatter(trajectory(2,:)/pi,trajectory(1,:))
@@ -160,10 +173,10 @@ ylabel({'y'})
 ylim([0 2])
 
 % plot angle against time
-figure()
-scatter(times,trajectory(2,:)/pi)
-xlabel({'t'})
-ylabel({'\theta','[\pi rad]'})
+%figure()
+%scatter(times,trajectory(2,:)/pi)
+%xlabel({'t'})
+%ylabel({'\theta','[\pi rad]'})
 
 % attempt at making something to find priod lengths
 figure()
@@ -172,13 +185,13 @@ xlabel({'t'})
 ylabel({'\theta','[\pi rad]'})
 
 % plots trajectory of many swimmers
-for traj=1:length(traj_store(1,1,:))
-    figure()
-    scatter(traj_store(2,:,traj)/pi,traj_store(1,:,traj))
-    xlabel({'\theta','[\pi rad]'})
-    ylabel({'y'})
-    ylim([0 2])
-end
+%for traj=1:length(traj_store(1,1,:))
+%    figure()
+%    scatter(traj_store(2,:,traj)/pi,traj_store(1,:,traj))
+%    xlabel({'\theta','[\pi rad]'})
+%    ylabel({'y'})
+%    ylim([0 2])
+%end
 
 all_theta = [];
 for traj=1:length(traj_store(1,1,:))
@@ -187,8 +200,7 @@ end
 
 % histogram thingy
 figure()
-polarhistogram(mod(all_theta/pi,2),BinWidth=0.05)
-xlabel({'\theta','[\pi rad]'})
+polarhistogram(mod(all_theta/pi,2))
 
 end
 toc

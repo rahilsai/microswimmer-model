@@ -12,7 +12,7 @@ for beta=0.99
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 2000; % # of simulated observations
+nPeriods = 100; % # of simulated observations
 dt       =  0.1;%sampling time
 times = dt;
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
@@ -54,8 +54,6 @@ timer_count = 0;
 
 % stores the squared displacement for given times
 sqd_tot = zeros(1,nPeriods+1);
-
-
 
 for iter = 1:sim_num
 disp(iter)
@@ -99,7 +97,6 @@ for y0 = linspace(0,2,100*2)
                 diffusion=DIFF(t,XX); %calculate diffusion term
                 dX = drift * dt(iPeriod)  +  diffusion * z * sqrtDT(iPeriod);            
                 XX=XX+dX; %update position and orientation
-
                 %%update XX for periodic top and bottom wall
                 if XX(1)>2
                     XX(1)=4-XX(1);
