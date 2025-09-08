@@ -20,7 +20,7 @@ T = W/(2*U); %dimensional constant (s)
 lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old));
 
 nThetaTotal= 20; %10;%20;
-nPeriods = 100; % # of simulated observations
+nPeriods = 3000; % # of simulated observations
 nSteps=20; % more smooth between t,tau;
 T0=0;
 sampleTimes=cumsum([T0;T(:)]);
@@ -28,6 +28,7 @@ nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 
 % the time steps used
 dt = 0.1/(nSteps);
+times = 0.1;
 
 % initailising past history of samples
 m_len = 200;
@@ -38,6 +39,12 @@ weighting_exp = w_exp / mean(w_exp); % normalise to get weights
 weighting = flip(weighting_exp); % set weighting as exponential instead of linear
 mwa = 0; %mean weighted average
 baseline = 0; %oldest value
+
+% initialise store for all the time points 
+% measuring the theta/y (end of periods)
+times = repmat(times,1,nPeriods+1);
+times(1) = 0;
+times = cumsum(times);
 
 %mini counter for self
 timer_count = 0;
@@ -150,7 +157,7 @@ figure()
 scatter(times,msq)
 xlabel({'t'})
 ylabel({'<r^2>'})
-ylim([0 0.5])
+%ylim([0 0.5])
 
 end
 toc
