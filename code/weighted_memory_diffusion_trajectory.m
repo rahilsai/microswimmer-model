@@ -20,7 +20,7 @@ T = W/(2*U); %dimensional constant (s)
 lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old));
 
 nThetaTotal= 20; %10;%20;
-nPeriods = 3000; % # of simulated observations
+nPeriods = 1000; % # of simulated observations
 nSteps=20; % more smooth between t,tau;
 T0=0;
 sampleTimes=cumsum([T0;T(:)]);
@@ -40,6 +40,13 @@ weighting = flip(weighting_exp); % set weighting as exponential instead of linea
 mwa = 0; %mean weighted average
 baseline = 0; %oldest value
 
+% initialise variable storing the trajectory of a swimmer
+trajectory = zeros(2,nPeriods+1);
+traj_store = trajectory;
+y_samples = 160:170;
+theta_samples = 1:20;
+traj_count = 0;
+
 % initialise store for all the time points 
 % measuring the theta/y (end of periods)
 times = repmat(times,1,nPeriods+1);
@@ -55,12 +62,15 @@ sqd_tot = zeros(1,nPeriods+1);
 % total number of simulations for each given point (BOTH)
 sim_num = 1;
 
+%%simulation loop
 for iter = 1:sim_num
 disp(iter)
 y_index = 0;
 
 %%y-loop
 for y0=linspace(-1,1,100*2)
+    % keeps track of the number of y values
+    y_index = y_index + 1;
 
     timer_count = timer_count+1;
     if timer_count == 20
@@ -121,6 +131,13 @@ for y0=linspace(-1,1,100*2)
     %keeps running sum across trajectories of squared displacements
     sqd_tot = sqd_tot + r;
 
+    %stores the rest of the trajectory from
+    if ismember(y_index,y_samples) && ismember(nTheta,theta_samples)
+        traj_count = traj_count + 1;
+        trajectory(:,:) = [X1;X2];
+        traj_store(:,:,traj_count) = trajectory;
+    end
+
     %%Positions and orientations of particles at the end of runtime        
     XEndDistr=[XEndDistr [ X1(end); X2(end)]];
     end
@@ -151,13 +168,57 @@ xlabel({'y'})
 ylabel({'n(y)'})
 
 % DIFFUSION plot (DIFFUSION)
-msq = sqd_tot/(200*nThetaTotal*sim_num);
+msq = sqd_tot/(100*nThetaTotal*sim_num);
 % this is the MSD agaisnt time
 figure()
 scatter(times,msq)
 xlabel({'t'})
 ylabel({'<r^2>'})
 %ylim([0 0.5])
+
+% plot trajectory of a single swimmer
+figure()
+scatter(trajectory(2,:)/pi,trajectory(1,:))
+xlabel({'\theta','[\pi rad]'})
+ylabel({'y'})
+ylim([-1 1])
+
+% plot angle against time
+%figure()
+%scatter(times,trajectory(2,:)/pi)
+%xlabel({'t'})
+%ylabel({'\theta','[\pi rad]'})
+
+% attempt at making something to find priod lengths
+figure()
+scatter(times,mod(trajectory(2,:)/pi+0.5,1))
+xlabel({'t'})
+ylabel({'\theta','[\pi rad]'})
+
+% plots trajectory of many swimmers
+%for traj=1:length(traj_store(1,1,:))
+%    figure()
+%    scatter(traj_store(2,:,traj)/pi,traj_store(1,:,traj))
+%    xlabel({'\theta','[\pi rad]'})
+%    ylabel({'y'})
+%    ylim([-1 1])
+%end
+
+all_theta = [];
+for traj=1:length(traj_store(1,1,:))
+    all_theta = [all_theta,traj_store(2,:,traj)];
+end
+
+% histogram thingy
+figure()
+polarhistogram(all_theta)
+
+% wall hitting angle distribution upper wall
+figure()
+histogram(mod(all_theta,2*pi))
+xlabel({'\theta','[\pi rad]'})
+xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
+xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 
 end
 toc

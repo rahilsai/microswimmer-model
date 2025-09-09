@@ -28,8 +28,8 @@ nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 % initialise variable storing the trajectory of a swimmer
 trajectory = zeros(2,nPeriods+1);
 traj_store = trajectory;
-y_samples = 150:155;
-theta_samples = 9:11;
+y_samples = 160:170;
+theta_samples = 1:20;
 traj_count = 0;
 
 % initialise store for all the time points 
@@ -45,8 +45,9 @@ timer_count = 0;
 sqd_tot = zeros(1,nPeriods+1);
 
 % total number of simulations for each given point (BOTH)
-sim_num = 5;
+sim_num = 1;
 
+%%simulation loop
 for iter = 1:sim_num
 disp(iter)
 y_index = 0;
@@ -192,6 +193,13 @@ end
 % histogram thingy
 figure()
 polarhistogram(all_theta)
+
+% wall hitting angle distribution upper wall
+figure()
+histogram(mod(all_theta,2*pi))
+xlabel({'\theta','[\pi rad]'})
+xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
+xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 
 end
 toc
