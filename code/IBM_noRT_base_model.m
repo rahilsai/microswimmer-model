@@ -7,12 +7,12 @@ rng(seed);
 nu=0.04;
 Pe_T=1e6;
 for Pe=100
-for beta=0.99
+for beta=[0.7,0.8,0.9,0.99]
     tic
 XEndDistr=[];
 
-nThetaTotal=100;%10;%20;
-nPeriods = 1000; % # of simulated observations
+nThetaTotal=20;%10;%20;
+nPeriods = 200; % # of simulated observations
 dt       =  0.1;%sampling time
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
@@ -27,7 +27,7 @@ nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 timer_count = 0;
 
 %%y-loop
-for  y0=linspace(-1,1,1000*2)
+for  y0=linspace(-1,1,100*2)
 
     %percentage of loops 
     timer_count = timer_count+1;
@@ -110,6 +110,5 @@ figure(Name="y_dist");histogram(XEndDistr(1,:))
 xlabel({'y'})
 ylabel({'n(y)'})
 end
-toc
 end
-
+toc
