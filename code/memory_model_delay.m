@@ -19,12 +19,14 @@ W = 425*10^-6; % channel width (m)
 U = 1250*10^-6; % centreline flow velocity (ms−1)
 T = W/(2*U); %dimensional constant (s)
 
+
+
 %tumble rate used as parameter for exponential dist to sample tau's
-lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old));
+lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old)/);
 
 
 nThetaTotal= 100; %10;%20;
-nPeriods = 500; % # of simulated observations
+nPeriods = 100; % # of simulated observations
 nSteps=20; % more smooth between t,tau,T;
 dt = T/20;
 %repT=repmat(T,nPeriods,1);
@@ -39,7 +41,7 @@ nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 timer_count = 0;
 swimmer = 0;
 
-for  y0=linspace(-1,1,1000*2)
+for  y0=linspace(-1,1,100*2)
 
     timer_count = timer_count+1;
     if timer_count == 10

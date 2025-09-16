@@ -7,35 +7,23 @@ rng(seed);
 nu=0.04;
 Pe_T=1e6;
 for Pe=100
-for beta=[0.7,0.8,0.9,0.99]
+for beta=0.99
     tic
 XEndDistr=[];
 
-nThetaTotal=20;%10;%20;
-nPeriods = 200; % # of simulated observations
-dt       =  0.1;%sampling time
-nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
+%initialise timestep and theta loops
+nThetaTotal=100; % 100
+nPeriods=3000; % # of simulated observations
+dt=0.1; % sampling time
+nSteps=20; %refines each step into subintervals, to approximate continuous process better;
 dt=repmat(dt,nPeriods,1);
 dt=dt/nSteps;
-% TotalTime=nSteps*nPeriods*dt(1);
 DT=repmat(dt,1,nSteps);
 T0=0;
 sampleTimes=cumsum([T0;DT(:)]);
-nTimes = nPeriods * nSteps;        % Total # of time steps simulated
-
-%mini counter for self
-timer_count = 0;
-
+nTimes = nPeriods * nSteps; % Total # of time steps simulated
 %%y-loop
-for  y0=linspace(-1,1,100*2)
-
-    %percentage of loops 
-    timer_count = timer_count+1;
-    if timer_count == 100
-        disp((y0+1)/2)
-        timer_count = 0;
-    end
-
+for  y0=linspace(-1,1,1000*2)
     %theta-loop
     parfor nTheta=1:nThetaTotal
     theta_0=2*pi*nTheta/nThetaTotal  ;  
@@ -79,36 +67,22 @@ for  y0=linspace(-1,1,100*2)
         end
     %%Positions and orientations of particles at the end of runtime        
     XEndDistr=[XEndDistr [ X1(end); X2(end)]];
-
     end
 end
 
-MatName=sprintf('DP_Pe%iPe_T%ibeta%inu%i.mat',Pe,Pe_T,beta,nu);
-save(MatName,'XEndDistr','Pe', 'beta','nu','Pe_T');
+MatName=sprintf('BaseModel_nPeriods%i.mat',nPeriods);
+save(MatName,'XEndDistr','nPeriods');
 
 %Plot bivariate distribution of raw data. Note this is not post-processed.
 figure(Name="3D_coarse")
 XEndDistr(2,:)=mod(XEndDistr(2,:),2*pi);hist3(XEndDistr','CDataMode','auto','FaceColor','interp');
-axis square
-xlabel({'y'})
-ylabel({'\theta'})
-yticks(0:pi/2:2*pi)%%%
-yticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'})%%%
-colorbar
-view(2)
-view([90 -90])
+axis square;xlabel({'y'});ylabel({'\theta'});yticks(0:pi/2:2*pi);yticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'})
+colorbar;view(2);view([90 -90])
 figure(Name="3D_fine");XEndDistr2=XEndDistr;XEndDistr2(2,:)=mod(XEndDistr2(2,:),2*pi);hist3(XEndDistr2','CDataMode','auto','FaceColor','interp','Nbins',[70 70]);
-axis square
-xlabel({'y'})
-ylabel({'\theta'})
-yticks(0:pi/2:2*pi)%%%
-yticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'})%%%
-colorbar
-view(2)
-view([90 -90])
-figure(Name="y_dist");histogram(XEndDistr(1,:))
-xlabel({'y'})
-ylabel({'n(y)'})
+axis square;xlabel({'y'});ylabel({'\theta'});yticks(0:pi/2:2*pi);yticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'})
+colorbar;view(2);view([90 -90])
+%Plot distribution of swimmers across channel
+figure(Name="y_dist");histogram(XEndDistr(1,:));xlabel({'y'});ylabel({'n(y)'})
 end
 end
 toc

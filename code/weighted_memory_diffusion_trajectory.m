@@ -6,7 +6,7 @@ rng(seed);
 %initialise parameters
 nu=0.04;
 Pe_T=1e6;
-for Pe=100
+for Pe=[1,10,100,10000]
 for beta=0.99
     tic
 XEndDistr=[];
@@ -20,7 +20,7 @@ T = W/(2*U); %dimensional constant (s)
 lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old));
 
 nThetaTotal= 20; %10;%20;
-nPeriods = 1000; % # of simulated observations
+nPeriods = 6000; % # of simulated observations
 nSteps=20; % more smooth between t,tau;
 T0=0;
 sampleTimes=cumsum([T0;T(:)]);
@@ -143,45 +143,33 @@ for y0=linspace(-1,1,100*2)
     end
 end
 end
+msd = sqd_tot/(200*nThetaTotal*sim_num);
 
-MatName=sprintf('DP_Pe%iPe_T%ibeta%inu%i.mat',Pe,Pe_T,beta,nu);
-save(MatName,'XEndDistr','Pe', 'beta','nu','Pe_T');
+MatName=sprintf('WeightedMemoryModelMSD_Pe%i.mat',Pe);
+save(MatName,'XEndDistr','Pe','times','msd');
 
 %Plot bivariate distribution of raw data. Note this is not post-processed.
-figure(Name="3D_coarse")
-XEndDistr(2,:)=mod(XEndDistr(2,:),2*pi);hist3(XEndDistr','CDataMode','auto','FaceColor','interp');
-axis square
-xlabel({'y'})
-ylabel({'\theta'})
-colorbar
-view(2)
-view([90 -90])
-figure(Name="3D_fine");XEndDistr2=XEndDistr;XEndDistr2(2,:)=mod(XEndDistr2(2,:),2*pi);hist3(XEndDistr2','CDataMode','auto','FaceColor','interp','Nbins',[70 70]);
-axis square
-xlabel({'y'})
-ylabel({'\theta'})
-colorbar
-view(2)
-view([90 -90])
-figure(Name="y_dist");histogram(XEndDistr(1,:))
-xlabel({'y'})
-ylabel({'n(y)'})
+%figure(Name="3D_coarse");XEndDistr(2,:)=mod(XEndDistr(2,:),2*pi);hist3(XEndDistr','CDataMode','auto','FaceColor','interp');
+%axis square;xlabel({'y'});ylabel({'\theta'});colorbar;view(2);view([90 -90])
+%figure(Name="3D_fine");XEndDistr2=XEndDistr;XEndDistr2(2,:)=mod(XEndDistr2(2,:),2*pi);hist3(XEndDistr2','CDataMode','auto','FaceColor','interp','Nbins',[70 70]);
+%axis square;xlabel({'y'});ylabel({'\theta'});colorbar;view(2);view([90 -90])
+%figure(Name="y_dist");histogram(XEndDistr(1,:))
+%xlabel({'y'});ylabel({'n(y)'})
 
 % DIFFUSION plot (DIFFUSION)
-msq = sqd_tot/(100*nThetaTotal*sim_num);
 % this is the MSD agaisnt time
 figure()
-scatter(times,msq)
+scatter(times,msd)
 xlabel({'t'})
 ylabel({'<r^2>'})
 %ylim([0 0.5])
 
 % plot trajectory of a single swimmer
-figure()
-scatter(trajectory(2,:)/pi,trajectory(1,:))
-xlabel({'\theta','[\pi rad]'})
-ylabel({'y'})
-ylim([-1 1])
+%figure()
+%scatter(trajectory(2,:)/pi,trajectory(1,:))
+%xlabel({'\theta','[\pi rad]'})
+%ylabel({'y'})
+%ylim([-1 1])
 
 % plot angle against time
 %figure()
@@ -190,10 +178,10 @@ ylim([-1 1])
 %ylabel({'\theta','[\pi rad]'})
 
 % attempt at making something to find priod lengths
-figure()
-scatter(times,mod(trajectory(2,:)/pi+0.5,1))
-xlabel({'t'})
-ylabel({'\theta','[\pi rad]'})
+%figure()
+%scatter(times,mod(trajectory(2,:)/pi+0.5,1))
+%xlabel({'t'})
+%ylabel({'\theta','[\pi rad]'})
 
 % plots trajectory of many swimmers
 %for traj=1:length(traj_store(1,1,:))
@@ -204,21 +192,21 @@ ylabel({'\theta','[\pi rad]'})
 %    ylim([-1 1])
 %end
 
-all_theta = [];
-for traj=1:length(traj_store(1,1,:))
-    all_theta = [all_theta,traj_store(2,:,traj)];
-end
+%all_theta = [];
+%for traj=1:length(traj_store(1,1,:))
+%    all_theta = [all_theta,traj_store(2,:,traj)];
+%end
 
 % histogram thingy
-figure()
-polarhistogram(all_theta)
+%figure()
+%polarhistogram(all_theta)
 
 % wall hitting angle distribution upper wall
-figure()
-histogram(mod(all_theta,2*pi))
-xlabel({'\theta','[\pi rad]'})
-xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
+%figure()
+%histogram(mod(all_theta,2*pi))
+%xlabel({'\theta','[\pi rad]'})
+%xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
+%xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 
 end
 toc

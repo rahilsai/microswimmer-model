@@ -6,13 +6,13 @@ rng(seed);
 %initialise parameters
 nu=0.04;
 Pe_T=1e6;
-for Pe=100
+for Pe=[0.1,0.5,1,10,100,10000]
 for beta=0.99
     tic
 XEndDistr=[];
 
 nThetaTotal=20;%10;%20;
-nPeriods = 100; % # of simulated observations
+nPeriods = 3000; % # of simulated observations
 dt       =  0.1;%sampling time
 times = dt;
 nSteps=20; %refines each step into subintervals, which are then calculated to approximate continuous process better;
@@ -133,38 +133,18 @@ for y0 = linspace(0,2,100*2)
     end
 end
 end
+msd = sqd_tot/(200*nThetaTotal*sim_num);
 
-MatName=sprintf('DP_Pe%iPe_T%ibeta%inu%i.mat',Pe,Pe_T,beta,nu);
-save(MatName,'XEndDistr','Pe', 'beta','nu','Pe_T');
+MatName=sprintf('BaseModelMSD_Pe%i.mat',Pe);
+save(MatName,'XEndDistr','Pe','times','msd');
 
 
-msq = sqd_tot/(200*nThetaTotal*sim_num);
 % this is the MSD agaisnt time
 figure()
-scatter(times,msq)
+scatter(times,msd)
 xlabel({'t'})
 ylabel({'<r^2>'})
 
-
-%Plot bivariate distribution of raw data. Note this is not post-processed.
-figure(Name="3D_coarse")
-XEndDistr(2,:)=mod(XEndDistr(2,:),2*pi);hist3(XEndDistr','CDataMode','auto','FaceColor','interp');
-axis square
-xlabel({'y'})
-ylabel({'\theta'})
-colorbar
-view(2)
-view([90 -90])
-figure(Name="3D_fine");XEndDistr2=XEndDistr;XEndDistr2(2,:)=mod(XEndDistr2(2,:),2*pi);hist3(XEndDistr2','CDataMode','auto','FaceColor','interp','Nbins',[70 70]);
-axis square
-xlabel({'y'})
-ylabel({'\theta'})
-colorbar
-view(2)
-view([90 -90])
-figure(Name="y_dist");histogram(XEndDistr(1,:))
-xlabel({'y'})
-ylabel({'n(y)'})
 
 % plot trajectory of a single swimmer
 %figure()
