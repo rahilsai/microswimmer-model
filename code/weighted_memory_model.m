@@ -10,24 +10,27 @@ for Pe=100
 for beta=0.99
     tic
 XEndDistr=[];
-chi = 100; % chemotactic strength (dimensionless)
+chi = 0.99; % chemotactic strength
 lambda_0 = 2; % tumble rate (s^-1)
+Vs = 50*10^-6; % swimming speed (ms^-1)
+
 W = 425*10^-6; % channel width (m)
 U = 1250*10^-6; % centreline flow velocity (ms−1)
-T = W/(2*U); %dimensional constant (s)
-
-%tumble rate used as parameter for exponential dist to sample tau's
-lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old));
+T = W/(2*U); % time scale
+L = W/2; % length scale
 
 nThetaTotal= 100; %10;%20;
-nPeriods = 1000; % # of simulated observations
+nPeriods = 500; % # of simulated observations %for nPeriods = [100,500,1000,3000] end
 nSteps=20; % more smooth between t,tau;
+dt = 0.1/nSteps;
 T0=0;
 sampleTimes=cumsum([T0;T(:)]);
-nTimes = nPeriods * nSteps;        % Total # of time steps simulated
+nTimes = nPeriods * nSteps; % Total # of time steps simulated the time steps used
 
-% the time steps used
-dt = 0.1/(nSteps);
+dist = Vs*dt/L; % approximate length travelled within a period
+
+%memory model tumble rate
+lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old)/dist);
 
 %mini counter for self
 timer_count = 0;
@@ -105,28 +108,15 @@ for y0=linspace(-1,1,1000*2)
     end
 end
 
-MatName=sprintf('DP_Pe%iPe_T%ibeta%inu%i.mat',Pe,Pe_T,beta,nu);
-save(MatName,'XEndDistr','Pe', 'beta','nu','Pe_T');
+MatName=sprintf('WeightedMemory_nPeriods%i.mat',nPeriods);
+save(MatName,'XEndDistr','nPeriods','Pe', 'beta','nu','Pe_T');
 
 %Plot bivariate distribution of raw data. Note this is not post-processed.
-figure(Name="3D_coarse")
-XEndDistr(2,:)=mod(XEndDistr(2,:),2*pi);hist3(XEndDistr','CDataMode','auto','FaceColor','interp');
-axis square
-xlabel({'y'})
-ylabel({'\theta'})
-colorbar
-view(2)
-view([90 -90])
 figure(Name="3D_fine");XEndDistr2=XEndDistr;XEndDistr2(2,:)=mod(XEndDistr2(2,:),2*pi);hist3(XEndDistr2','CDataMode','auto','FaceColor','interp','Nbins',[70 70]);
-axis square
-xlabel({'y'})
-ylabel({'\theta'})
-colorbar
-view(2)
-view([90 -90])
-figure(Name="y_dist");histogram(XEndDistr(1,:))
-xlabel({'y'})
-ylabel({'n(y)'})
+axis square;xlabel({'y'});ylabel({'\theta'});yticks(0:pi/2:2*pi);yticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});colorbar;view(2);view([90 -90])
+
+%Plot distribution of swimmers across channel
+figure(Name="y_dist");histogram(XEndDistr(1,:));xlabel({'y'});ylabel({'n(y)'})
 
 end
 toc

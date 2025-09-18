@@ -60,13 +60,13 @@ disp(iter)
 y_index = 0;
 
 %%y-loop
-for y0 = linspace(0,2,100*2)
+for y0 = linspace(-1,1,100*2)
     % keeps track of the number of y values
     y_index = y_index + 1;
 
     timer_count = timer_count+1;
     if timer_count == 20
-        disp(y0/2)
+        disp((y0+1)/2)
         timer_count = 0;
     end
 
@@ -78,7 +78,7 @@ for y0 = linspace(0,2,100*2)
     X0=[y0;theta_0];
     X1=X0(1,1);
     X2=X0(2,1);
-    MU = @(t,x) [nu*sin(x(2));-(x(1)*(1-beta*cos(2*x(2)))+(-1+beta*cos(2*x(2))))];
+    MU = @(t,x) [nu*sin(x(2));x(1)*(1-beta*cos(2*x(2)))];
     DIFF = @(t,x) sqrt([2/Pe_T 0; 0 2/Pe]);
     nBrownians=size(DIFF(0,X0),2);
     sqrtDT=sqrt(dt);
@@ -98,13 +98,13 @@ for y0 = linspace(0,2,100*2)
                 dX = drift * dt(iPeriod)  +  diffusion * z * sqrtDT(iPeriod);            
                 XX=XX+dX; %update position and orientation
                 %%update XX for periodic top and bottom wall
-                if XX(1)>2
-                    XX(1)=4-XX(1);
+                if XX(1)>1
+                    XX(1)=2-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
                     XX(2)=theta_new;
-                elseif XX(1)<0
-                    XX(1)=-XX(1);
+                elseif XX(1)<-1
+                    XX(1)=-2-XX(1);
                     theta_old=mod(-XX(2),2*pi);
                     theta_new=theta_old;
                     XX(2)=theta_new;

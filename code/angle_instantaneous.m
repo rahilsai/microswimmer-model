@@ -105,26 +105,12 @@ MatName=sprintf('DP_Pe%iPe_T%ibeta%inu%i.mat',Pe,Pe_T,beta,nu);
 save(MatName,'XEndDistr','Pe', 'beta','nu','Pe_T');
 
 %Plot bivariate distribution of raw data. Note this is not post-processed.
-figure(Name="3D_coarse")
-XEndDistr(2,:)=mod(XEndDistr(2,:),2*pi);hist3(XEndDistr','CDataMode','auto','FaceColor','interp');
-axis square
-xlabel({'y'})
-ylabel({'\theta'})
-colorbar
-view(2)
-view([90 -90])
 figure(Name="3D_fine");XEndDistr2=XEndDistr;XEndDistr2(2,:)=mod(XEndDistr2(2,:),2*pi);hist3(XEndDistr2','CDataMode','auto','FaceColor','interp','Nbins',[70 70]);
-axis square
-xlabel({'y'})
-ylabel({'\theta'})
-yticks(0:pi/2:2*pi)%%%
-yticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'})%%%
-colorbar
-view(2)
-view([90 -90])
-figure(Name="y_dist");histogram(XEndDistr(1,:))
-xlabel({'y'})
-ylabel({'n(y)'})
+axis square;xlabel({'y'});ylabel({'\theta'});yticks(0:pi/2:2*pi);yticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});colorbar;view(2);view([90 -90])
+
+%Plot distribution of swimmers across channel
+figure(Name="y_dist");histogram(XEndDistr(1,:));xlabel({'y'});ylabel({'n(y)'})
+
 end
 toc
 end
