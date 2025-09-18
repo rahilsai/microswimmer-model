@@ -10,8 +10,8 @@ for Pe=100
 for beta=0.99
     tic
 XEndDistr=[];
-chi = 0.99; % chemotactic strength (dimensionless) 
-lambda_0 = 0.99; % tumble rate (s^-1)
+chi = 0.99; % chemotactic strength 
+lambda_0 = 2; % tumble rate (s^-1)
 
 W = 425*10^-6; % channel width (m)
 U = 1250*10^-6; % centreline flow velocity (ms−1)
@@ -25,7 +25,7 @@ nPeriods = 500; % # of simulated observations
 nSteps=20; % more smooth between t,tau;
 T0=0;
 sampleTimes=cumsum([T0;T(:)]);
-nTimes = nPeriods * nSteps;        % Total # of time steps simulated
+nTimes = nPeriods * nSteps; % Total # of time steps simulated
 
 % the time steps used
 dt = 0.1/nSteps;

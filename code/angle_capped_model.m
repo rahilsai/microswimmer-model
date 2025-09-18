@@ -10,10 +10,8 @@ for Pe=100
 for beta=0.99
     tic
 XEndDistr=[];
-chi = 0.99; % chemotactic strength (dimensionless) 
-% (can alter this paramter)
+chi = 0.99; % chemotactic strength
 lambda_0 = 2; % tumble rate (s^-1)
-%Vs = 50*10^-6; % swimming speed (ms^-1)
 
 W = 425*10^-6; % channel width (m)
 U = 1250*10^-6; % centreline flow velocity (ms−1)
@@ -22,7 +20,7 @@ T = W/(2*U); %dimensional constant (s)
 %tumble rate used as parameter for exponential dist to sample tau's
 lambda = @(theta) (lambda_0-chi*sin(theta));
 
-nThetaTotal= 100; %10;%20;
+nThetaTotal= 100;
 nPeriods = 500; % # of simulated observations
 nSteps=20; % more smooth between t,tau,T;
 T0=0;
@@ -91,8 +89,6 @@ for  y0=linspace(-1,1,1000*2)
                     XX(2)=theta_new;
                 end
             end
-         
-            
             %%Final position and orientation at end of iperiod
             X1(iPeriod+1)=XX(1);
             X2(iPeriod+1)=XX(2);
@@ -103,7 +99,6 @@ for  y0=linspace(-1,1,1000*2)
     end
     %%Positions and orientations of particles at the end of runtime        
     XEndDistr=[XEndDistr [ X1(end); X2(end)]];
-
     end
 end
 
@@ -118,22 +113,13 @@ axis square;xlabel({'y'});ylabel({'\theta'});yticks(0:pi/2:2*pi);yticklabels({'0
 figure(Name="y_dist");histogram(XEndDistr(1,:));xlabel({'y'});ylabel({'n(y)'})
 
 % plot trajectory of a single swimmer
-figure()
-scatter(trajectory(2,:)/pi,trajectory(1,:))
-xlabel({'\theta','[\pi rad]'})
-ylabel({'y'})
-ylim([0 2])
+figure();scatter(trajectory(2,:)/pi,trajectory(1,:))
+xlabel({'\theta','[\pi rad]'});ylabel({'y'});ylim([0 2])
 
 % Make a colour vector based on the point index
 t = 1:size(trajectory, 2);  % time step index
-figure()
-scatter(trajectory(2,:)/pi, trajectory(1,:), 36, t, 'filled')
-xlabel({'\theta','[\pi rad]'})
-ylabel({'y'})
-ylim([0 2])
-% Choose a colormap and add colourbar
-colormap(jet)
-colorbar
+figure();scatter(trajectory(2,:)/pi, trajectory(1,:), 36, t, 'filled')
+xlabel({'\theta','[\pi rad]'});ylabel({'y'});ylim([0 2]);colormap(jet);colorbar
 end
 toc
 end
