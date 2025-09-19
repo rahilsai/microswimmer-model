@@ -39,12 +39,14 @@ current_mat_o_u = [];
 current_mat_o_l = [];
 y_index = 0;
 simulation_count = 0;
+
 % initialise channel crossing variables
 current_mat_c = [];
 crossed = [];
-% total number of simulations for each given point
-sim_num = 5;
-% initialise matrix to store every single simulation/run
+
+sim_num = 5; % total number of simulations for grid of initial points
+
+%%initialise matrix to store every single simulation/run
 large_mat_t_u = zeros(nYTotal,nThetaTotal,sim_num);
 large_mat_t_l = zeros(nYTotal,nThetaTotal,sim_num);
 large_mat_o_u = zeros(nYTotal,nThetaTotal,sim_num);
@@ -194,7 +196,7 @@ figure(Name="y_dist");histogram(XEndDistr(1,:));xlabel({'y'});ylabel({'n(y)'})
 figure()
 histogram(theta_u)
 xlabel({'\theta','[\pi rad]'})
-xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
+xticks(0:pi/2:2*pi);
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 title('upper wall hitting angle');
 
@@ -230,13 +232,9 @@ title('Crossing Times');
 colorbar;
 
 % make NaN transparent (white)
-set(h_c, 'AlphaData', ~isnan(data_c));   
-set(gca, 'Color', 'w');              % background is white
+set(h_c, 'AlphaData', ~isnan(data_c));set(gca, 'Color', 'w');
 
-xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-yticks(0:0.5:2);                     % ticks multiples of 0.5
-
+xticks(0:pi/2:2*pi);xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});yticks(0:0.5:2);
 
 %-----------------------------------
 % upper wall plot average first hit times
@@ -254,12 +252,9 @@ title('Hitting times (steps) Upper Wall');
 colorbar;
 
 % make NaN transparent (white)
-set(h_t_u, 'AlphaData', ~isnan(data_t_u));   
-set(gca, 'Color', 'w');              % background is white
+set(h_t_u, 'AlphaData', ~isnan(data_t_u));set(gca, 'Color', 'w');
 
-xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-yticks(0:0.5:2);                     % ticks multiples of 0.5
+xticks(0:pi/2:2*pi);xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});yticks(0:0.5:2);
 
 %----------------------------------------
 % upper wall plot average first hit orientation
@@ -277,8 +272,7 @@ title('Hitting orientations (theta) Upper Wall');
 colorbar;
 
 % make NaN transparent (white)
-set(h_o_u, 'AlphaData', ~isnan(data_o_u));   
-set(gca, 'Color', 'w');              % background is white
+set(h_o_u, 'AlphaData', ~isnan(data_o_u));set(gca, 'Color', 'w');
 
 xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
 xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
@@ -305,13 +299,8 @@ title('Hitting times (steps) Lower Wall');
 colorbar;
 
 % make NaN transparent (white)
-set(h_t_l, 'AlphaData', ~isnan(data_t_l));   
-set(gca, 'Color', 'w');              % background is white
-
-xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-yticks(0:0.5:2);                     % ticks multiples of 0.5
-
+set(h_t_l, 'AlphaData', ~isnan(data_t_l)); set(gca, 'Color', 'w');
+xticks(0:pi/2:2*pi);xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});yticks(0:0.5:2);
 %-----------------------------------------
 % lower wall plot average first hit orientation
 figure();
@@ -328,12 +317,8 @@ title('Hitting orientations (theta) Lower Wall');
 colorbar;
 
 % make NaN transparent (white)
-set(h_o_l, 'AlphaData', ~isnan(data_o_l));   
-set(gca, 'Color', 'w');              % background is white
-
-xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
-xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
-yticks(0:0.5:2);                     % ticks multiples of 0.5
+set(h_o_l, 'AlphaData', ~isnan(data_o_l));set(gca, 'Color', 'w');
+xticks(0:pi/2:2*pi);xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});yticks(0:0.5:2);
 
 % after plotting
 clim([0 2*pi]);   % scale colorbar from 0 to 2π

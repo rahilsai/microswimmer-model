@@ -6,7 +6,7 @@ rng(seed);
 %initialise parameters
 nu=0.04;
 Pe_T=1e6;
-for Pe=[0.1,0.5,1,10,100,10000]
+for Pe=[1,10,100]
 for beta=0.99
     tic
 XEndDistr=[];
@@ -145,6 +145,48 @@ scatter(times,msd)
 xlabel({'t'})
 ylabel({'<r^2>'})
 
+for dont=[]
+%% used seperately to plot multiple line plots for diffusion
+figure()
+plot(times(1:200),RT(1:200),'LineWidth',1)
+hold on
+plot(times(1:200),msd1(1:200),'Linewidth',1)
+hold off
+xlabel({'t'})
+ylabel({'<r^2>'})
+legend('Run and Tumble','no Run and Tumble')
+
+figure()
+plot(times,RT,'LineWidth',1)
+hold on
+plot(times,msd1,'Linewidth',1)
+hold off
+xlabel({'t'})
+ylabel({'<r^2>'})
+legend('Run and Tumble','no Run and Tumble')
+
+figure()
+plot(times,constantRT, "r",'LineWidth',1)
+hold on
+plot(times,msd1,"g--",'LineWidth',1)
+plot(times,msd2,"c--",'LineWidth',1)
+plot(times,msd3,"b--",'LineWidth',1)
+hold off
+xlabel({'t'})
+ylabel({'<r^2>'})
+legend('constant tumble rate','Pe = 100','Pe=10','Pe=1')
+
+
+figure()
+plot(times,RT,'LineWidth',1)
+hold on
+plot(times,constantRT,"r",'LineWidth',1)
+hold off
+xlabel({'t'})
+ylabel({'<r^2>'})
+legend('varying tumble rate','constant tumble rate')
+
+end
 
 % plot trajectory of a single swimmer
 %figure()

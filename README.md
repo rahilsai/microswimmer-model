@@ -13,7 +13,7 @@ paper. This is used to build the other models by adding the
 tumbling. Here the parameters are used as the base parameters
 as well in order to have as a reference point.
 
-### angle_instantaneous (single plot of y-theta)
+### angle_probability_model (single plot of y-theta)
 The tumble rate is calculated based on the angle, so when facing
 the upper wall the sin value is the greatest resulting in a 
 minimum rate of tumbling and vice versa for facing the lower wall.
@@ -100,6 +100,6 @@ applied all this to the weighted memory model in:
 weighted_memory_diffusion_trajectory.m
 
 ### diffusion_measure
-no need, just here in case
+redundant, just here in case
 
 

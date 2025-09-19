@@ -6,29 +6,31 @@ rng(seed);
 %initialise parameters
 nu=0.04;
 Pe_T=1e6;
-for Pe=[1,10,100,10000]
+for Pe=100
 for beta=0.99
     tic
 XEndDistr=[];
-chi = 100; % chemotactic strength (dimensionless)
+for chi = [0,0.99]; % chemotactic strength
 lambda_0 = 2; % tumble rate (s^-1)
+Vs = 50*10^-6; % swimming speed (ms^-1)
+
 W = 425*10^-6; % channel width (m)
 U = 1250*10^-6; % centreline flow velocity (ms−1)
 T = W/(2*U); %dimensional constant (s)
-
-%tumble rate used as parameter for exponential dist to sample tau's
-lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old));
+L = W/2; % length scale
 
 nThetaTotal= 20; %10;%20;
-nPeriods = 6000; % # of simulated observations
+nPeriods = 3000; % # of simulated observations
 nSteps=20; % more smooth between t,tau;
+dt = 0.1/(nSteps);
 T0=0;
 sampleTimes=cumsum([T0;T(:)]);
 nTimes = nPeriods * nSteps;        % Total # of time steps simulated
 
-% the time steps used
-dt = 0.1/(nSteps);
-times = 0.1;
+dist = Vs*dt/L; % approximate length travelled within a period
+
+%memory model tumble rate
+lambda = @(s_new,s_old) (lambda_0-chi*(s_new - s_old)/dist);
 
 % initailising past history of samples
 m_len = 200;
@@ -49,6 +51,7 @@ traj_count = 0;
 
 % initialise store for all the time points 
 % measuring the theta/y (end of periods)
+times = 0.1;
 times = repmat(times,1,nPeriods+1);
 times(1) = 0;
 times = cumsum(times);
@@ -56,10 +59,10 @@ times = cumsum(times);
 %mini counter for self
 timer_count = 0;
 
-% stores the squared displacement for given times (DIFFUSION)
+% stores the squared displacement for given times
 sqd_tot = zeros(1,nPeriods+1);
 
-% total number of simulations for each given point (BOTH)
+% total number of simulations for each given point
 sim_num = 1;
 
 %%simulation loop
@@ -145,16 +148,8 @@ end
 end
 msd = sqd_tot/(200*nThetaTotal*sim_num);
 
-MatName=sprintf('WeightedMemoryModelMSD_Pe%i.mat',Pe);
-save(MatName,'XEndDistr','Pe','times','msd');
-
-%Plot bivariate distribution of raw data. Note this is not post-processed.
-%figure(Name="3D_coarse");XEndDistr(2,:)=mod(XEndDistr(2,:),2*pi);hist3(XEndDistr','CDataMode','auto','FaceColor','interp');
-%axis square;xlabel({'y'});ylabel({'\theta'});colorbar;view(2);view([90 -90])
-%figure(Name="3D_fine");XEndDistr2=XEndDistr;XEndDistr2(2,:)=mod(XEndDistr2(2,:),2*pi);hist3(XEndDistr2','CDataMode','auto','FaceColor','interp','Nbins',[70 70]);
-%axis square;xlabel({'y'});ylabel({'\theta'});colorbar;view(2);view([90 -90])
-%figure(Name="y_dist");histogram(XEndDistr(1,:))
-%xlabel({'y'});ylabel({'n(y)'})
+MatName=sprintf('WeightedMemoryModelMSD_Pe%iChi%i.mat',Pe,chi);
+save(MatName,'XEndDistr','Pe','times','msd',"chi");
 
 % DIFFUSION plot (DIFFUSION)
 % this is the MSD agaisnt time
@@ -208,6 +203,7 @@ ylabel({'<r^2>'})
 %xticks(0:pi/2:2*pi);                 % tick multiples of pi/2
 %xticklabels({'0','\pi/2','\pi','3\pi/2','2\pi'});
 
+end
 end
 toc
 end
